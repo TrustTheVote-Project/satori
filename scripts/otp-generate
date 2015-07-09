@@ -1,0 +1,38 @@
+#!/bin/bash
+
+if [ -z "$TENET_USER_ID" ]
+then
+  echo "ERROR: TENET_USER_ID should contain group user ID"
+  exit 1
+fi
+
+if [[ "$TENET_USER_ID" =~ [^0-9] ]] && [ "$TENET_USER_ID" != "admin" ]
+then
+  echo "ERROR: TENET_USER_ID should be numeric or 'admin'"
+  exit 1
+fi
+
+if [ -z "$TENET_DB_USERNAME" -o -z "$TENET_DB_NAME" ]
+then
+  echo "ERROR: TENET_DB_USERNAME and TENET_DB_NAME should be configured"
+  exit 1
+fi
+
+# Generate salt + pass and encrypt it into password
+salt=`openssl rand -base64 18 | sed -e "s/[\"\']/-/g"`
+pass=`openssl rand -base64 6`
+token="$pass$salt"
+encrypted_password=`echo -n $token | openssl dgst -sha1 | sed -e 's/^.*= //'`
+
+# Save password to db
+if [[ "$TENET_USER_ID" == "admin" ]]
+then
+  sql="WITH upsert AS (UPDATE tenet_settings SET value='$salt' WHERE name='admin_salt' RETURNING *) INSERT INTO tenet_settings (name, value) SELECT 'admin_salt', '$salt' WHERE NOT EXISTS (SELECT * FROM upsert); WITH upsert AS (UPDATE tenet_settings SET value='$encrypted_password' WHERE name='admin_crypted_password' RETURNING *) INSERT INTO tenet_settings (name, value) SELECT 'admin_crypted_password', '$encrypted_password' WHERE NOT EXISTS (SELECT * FROM upsert);"
+else
+  sql="UPDATE users SET crypted_password='$encrypted_password', salt='$salt', password_set='t' WHERE id=$TENET_USER_ID AND admin='t'"
+fi
+echo "$sql" | psql -U$TENET_DB_USERNAME $TENET_DB_NAME 1>/dev/null 2>&1
+
+echo "SUCCESS: $pass"
+exit 0
+

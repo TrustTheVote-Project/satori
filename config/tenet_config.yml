@@ -1,0 +1,35 @@
+app_title: Satori
+
+# Name of Unix user for otp
+otp_user: otp
+
+admin:
+  # user id of admin-admin
+  login: admin
+
+urls:
+  user_dashboard:  /user-dashboard
+
+email:
+  # Host of the app for in-mail links generation
+  host: trustthevote.org
+
+  # From-field of outgoing mail
+  noreply: noreply@trustthevote.org
+
+  # Super-admin email address(es) for notifications
+  superadmin: admin@localhost.localdomain
+
+# List of roles. Can either be a hash or an array:
+# Example 1:
+#   user_roles: [ "reader", "writer" ]
+#
+# Example 2:
+#   user_roles:
+#     reader: Reading messages only
+#     writer: Reading and writing messages
+user_roles: []
+
+# Hook to call after new group saving for further initialization
+# account_hooks_class_name: AccountHooks
+# account_after_create_method_name: after_create

@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# This script simply dumps its stdin into authorized_keys file.
+# This is done to let us write to a user-only file by granting
+# sudo access to this script.
+
+# Location of the keys file
+if [ -z "$TENET_AUTHORIZED_KEYS_FILE" ]
+then
+  TENET_AUTHORIZED_KEYS_FILE=~/.ssh/authorized_keys
+fi
+
+if [ ! -f $TENET_AUTHORIZED_KEYS_FILE ]
+then
+  echo "ERROR: Keys file is missing -- $TENET_AUTHORIZED_KEYS_FILE"
+  echo "You can change path by setting TENET_AUTHORIZED_KEYS_FILE environment variable."
+  exit 1
+fi
+
+cat > $TENET_AUTHORIZED_KEYS_FILE
+exit 0
+
