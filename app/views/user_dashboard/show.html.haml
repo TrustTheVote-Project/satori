@@ -1,0 +1,20 @@
+.row
+  .col-sm-12
+    %h3 Elections
+
+    .pull-right
+      = link_to "New Election", :new_election, class: 'btn btn-primary'
+
+    %table.table
+      %thead
+        %tr
+          %th Elections
+
+      - if @elections.empty?
+        %tr
+          %td{ colspan: 1 } There are no elections yet
+      - else
+        - @elections.each do |e|
+          %tr
+            %td= link_to e.name, e
+

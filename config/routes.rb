@@ -1,5 +1,12 @@
 Rails.application.routes.draw do
   root "tenet/pages#landing"
+
+  get "/dashboard" => "user_dashboard#show"
+
+  resources :elections, only: [ :show, :new, :create ] do
+    resources :logs
+  end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

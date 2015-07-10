@@ -8,7 +8,7 @@ admin:
   login: admin
 
 urls:
-  user_dashboard:  /user-dashboard
+  user_dashboard:  /dashboard
 
 email:
   # Host of the app for in-mail links generation
