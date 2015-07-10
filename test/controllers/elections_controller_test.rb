@@ -14,7 +14,7 @@ class ElectionsControllerTest < ActionController::TestCase
   test 'create succesfully' do
     post :create, election: { name: "Election" }
     e = Election.last
-    assert_redirected_to [ e, :logs ]
+    assert_redirected_to e
   end
 
 end

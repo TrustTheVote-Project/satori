@@ -16,7 +16,7 @@ class ElectionsController < BaseController
   def create
     @election = Election.new(elec_params)
     if @election.save
-      redirect_to [ @election, :logs ], notice: "Election created"
+      redirect_to @election, notice: "Election created"
     else
       render :new
     end
