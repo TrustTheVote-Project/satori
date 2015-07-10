@@ -33,9 +33,13 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'capistrano-rails', group: :development
 
 gem "tenet", git: "https://github.com/trustthevote/Tenet-Framework.git", branch: "rails-4-2-3"
-gem "quiet_assets"
 gem "vtl", git: "git@github.com:TrustTheVote-Project/vtl.git"
 
+group :development do
+  gem 'capistrano-rails'
+  gem "quiet_assets"
+  gem 'foreman'
+end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
