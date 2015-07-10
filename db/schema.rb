@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150710071410) do
+ActiveRecord::Schema.define(version: 20150710112041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,8 +69,10 @@ ActiveRecord::Schema.define(version: 20150710071410) do
     t.string   "comment"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.integer  "election_id"
   end
 
+  add_index "records", ["election_id"], name: "index_records_on_election_id", using: :btree
   add_index "records", ["log_id"], name: "index_records_on_log_id", using: :btree
 
   create_table "registration_requests", force: :cascade do |t|
@@ -142,5 +144,6 @@ ActiveRecord::Schema.define(version: 20150710071410) do
   add_index "users", ["suspended"], name: "index_users_on_suspended", using: :btree
 
   add_foreign_key "logs", "elections"
+  add_foreign_key "records", "elections"
   add_foreign_key "records", "logs"
 end

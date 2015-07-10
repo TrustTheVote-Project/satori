@@ -9,12 +9,15 @@
       %thead
         %tr
           %th Elections
+          %th
 
       - if @elections.empty?
         %tr
-          %td{ colspan: 1 } There are no elections yet
+          %td{ colspan: 2 } There are no elections yet
       - else
         - @elections.each do |e|
           %tr
             %td= link_to e.name, e
-
+            %td.col-sm-1.text-right
+              = link_to e, method: 'delete', data: { confirm: 'Delete this election?' }, class: 'btn btn-xs btn-danger' do
+                .glyphicon.glyphicon-remove

@@ -7,6 +7,11 @@ class ElectionsController < BaseController
     @election = Election.new
   end
 
+  # election
+  def show
+    @election = Election.find(params[:id])
+  end
+
   # creates election
   def create
     @election = Election.new(elec_params)
@@ -15,6 +20,11 @@ class ElectionsController < BaseController
     else
       render :new
     end
+  end
+
+  def destroy
+    Election.find(params[:id]).destroy
+    redirect_to :dashboard, notice: "Election deleted"
   end
 
   private

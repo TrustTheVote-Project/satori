@@ -1,10 +1,13 @@
 Rails.application.routes.draw do
   root "tenet/pages#landing"
 
-  get "/dashboard" => "user_dashboard#show"
+  get "/dashboard" => "user_dashboard#show", as: 'dashboard'
 
-  resources :elections, only: [ :show, :new, :create ] do
+  resources :elections, only: [ :show, :new, :create, :destroy ] do
     resources :logs
+    resources :voters
+
+    get '/reports/events_by_county' => 'reports#events_by_county', as: 'events_by_county_report'
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

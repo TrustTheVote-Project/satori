@@ -3,12 +3,6 @@ class LogsController < BaseController
   before_action :require_user_acc
   before_action :load_election
 
-  # lists all logs and offers new uploads
-  def index
-    @logs = @election.logs
-    render :index
-  end
-
   # parses the upload and creates log and records
   def create
     file = params[:upload][:file]
@@ -31,10 +25,16 @@ class LogsController < BaseController
       end
     end
 
-    redirect_to [ @election, :logs ], notice: "File uploaded"
+    redirect_to @election, notice: "Log uploaded"
   rescue VTL::ValidationError => e
     flash.now.alert = "Failed to parse VTL: #{e.message}"
-    index
+    render :new
+  end
+
+  # removes the log
+  def destroy
+    @election.logs.find(params[:id]).destroy
+    redirect_to @election, notice: "Log deleted"
   end
 
   private

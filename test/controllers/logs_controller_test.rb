@@ -6,24 +6,22 @@ class LogsControllerTest < ActionController::TestCase
 
   setup { login_user users(:user) }
 
-  test 'index' do
-    get :index, election_id: election.id
-    assert_template :index
-    assert_not_nil assigns(:logs)
+  test 'new' do
+    get :new, election_id: election.id
+    assert_template :new
   end
 
   test 'failed VTL parsing on create' do
     VTL.expects(:parse).raises(VTL::ValidationError, "abc")
     post :create, election_id: election.id, upload: { file: 'xml' }
-    assert_template :index
-    assert_not_nil assigns(:logs)
+    assert_template :new
     assert_equal "Failed to parse VTL: abc", flash.now[:alert]
   end
 
   test 'successful VTL parsing on create' do
     VTL.expects(:parse).returns(log)
     post :create, election_id: election.id, upload: { file: fixture_file_upload('/files/empty.xml', 'application/xml') }
-    assert_redirected_to [ election, :logs ]
+    assert_redirected_to election
     assert_equal "File uploaded", flash.notice
 
     l = election.logs.last

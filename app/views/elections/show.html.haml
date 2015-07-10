@@ -1,3 +1,52 @@
 .page-header
   %h2 Election Details
 
+.row
+  .col-sm-6
+    .row.block
+      .col-sm-9
+        %h3 Logs
+      .col-sm-3
+        = link_to "Upload logs", [ :new, @election, :log ], class: 'btn btn-default'
+
+    %table.table
+      %thead
+        %tr
+          %th Filename
+          %th Origin
+          %th Created on
+          %th
+
+      - if @election.logs.blank?
+        %tr
+          %td{ colspan: 4 } No logs loaded yet
+      - else
+        - @election.logs.each do |l|
+          %tr
+            %td= l.filename
+            %td= l.origin
+            %td= l.create_date.strftime("%B %d, %Y %l:%M%p")
+            %td.text-right
+              = link_to [ @election, l ], method: 'delete', data: { confirm: 'Delete this log?' }, class: 'btn btn-xs btn-danger' do
+                .glyphicon.glyphicon-remove
+
+  .col-sm-6
+    .row.block
+      .col-sm-9
+        %h3 Voters
+      .col-sm-3
+        = link_to "Upload voters", [ :new, @election, :voter ], class: 'btn btn-default'
+
+    %table.table
+      %thead
+        %tr
+          %th Filename
+          %th
+      %tr
+        %td{ colspan: 2 } No voters loaded yet
+
+.row
+  .col-sm-12
+    %h3 Reports
+
+    %p= link_to "Events by County", [ @election, :events_by_county_report ]

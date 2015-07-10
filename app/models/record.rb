@@ -1,5 +1,9 @@
 class Record < ActiveRecord::Base
+
+  belongs_to :election
   belongs_to :log
+
+  before_validation :init_election
 
   # sets attributes from the record VTL
   def set_attributes_from_vtl(rec)
@@ -12,6 +16,12 @@ class Record < ActiveRecord::Base
     self.leo          = rec.leo
     self.notes        = rec.notes
     self.comment      = rec.comment
+  end
+
+  private
+
+  def init_election
+    self.election ||= log.try(:election)
   end
 
 end
