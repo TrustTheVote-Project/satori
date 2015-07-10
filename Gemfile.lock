@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: https://github.com/trustthevote/Tenet-Framework.git
-  revision: f0591e507fe1a3eced9f2c8ea4f9ed5834587222
+  revision: cc5792ec08ae64a0ceca57723ca028dba11cf816
   branch: rails-4-2-3
   specs:
     tenet (0.0.1)
@@ -289,7 +289,7 @@ GEM
       redis-store (~> 1.1.0)
     redis-store (1.1.5)
       redis (>= 2.2)
-    ref (1.0.5)
+    ref (2.0.0)
     request_store (1.1.0)
     rspec-logsplit (0.1.3)
     ruby_parser (3.7.0)
