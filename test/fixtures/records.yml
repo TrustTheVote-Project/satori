@@ -1,0 +1,7 @@
+v1_approve:
+  log:          log_one
+  voter_id:     "1"
+  recorded_at:  2015-07-10 10:14:10
+  action:       approve
+  form:         VoterRecordUpdate
+  jurisdiction: PRINCE GEORGE COUNTY

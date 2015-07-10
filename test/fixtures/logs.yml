@@ -1,0 +1,7 @@
+log_one:
+  election:     one
+  origin:       Sample Data
+  origin_uniq:  B6BF0C25-BDEA-440B-BDAF-000000000000
+  create_date:  2014-07-21 08:53:02
+  hash_alg:     SHA1
+  filename:     vtl_va_0.0.xml

@@ -1,21 +1,9 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
-  name: MyString
-  held_on: 2015-07-09
-  voter_start_on: 2015-07-09
-  voter_end_on: 2015-07-09
-  reg_deadline_on: 2015-07-09
-  ab_req_deadline_on: 2015-07-09
-  ab_rec_deadline_on: 2015-07-09
-  ffd_deadline_on: 2015-07-09
-
-two:
-  name: MyString
-  held_on: 2015-07-09
-  voter_start_on: 2015-07-09
-  voter_end_on: 2015-07-09
-  reg_deadline_on: 2015-07-09
-  ab_req_deadline_on: 2015-07-09
-  ab_rec_deadline_on: 2015-07-09
-  ffd_deadline_on: 2015-07-09
+  name:                Election One
+  held_on:             2015-07-09
+  voter_start_on:      2015-07-09
+  voter_end_on:        2015-07-09
+  reg_deadline_on:     2015-07-09
+  ab_req_deadline_on:  2015-07-09
+  ab_rec_deadline_on:  2015-07-09
+  ffd_deadline_on:     2015-07-09

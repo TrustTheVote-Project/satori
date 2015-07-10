@@ -34,6 +34,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem "tenet", git: "https://github.com/trustthevote/Tenet-Framework.git", branch: "rails-4-2-3"
 gem "quiet_assets"
+gem "vtl", git: "git@github.com:TrustTheVote-Project/vtl.git"
 
 
 group :development, :test do
@@ -45,5 +46,8 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+  gem 'guard'
+  gem 'guard-minitest'
+  gem 'mocha'
 end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150709142637) do
+ActiveRecord::Schema.define(version: 20150710071410) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,37 @@ ActiveRecord::Schema.define(version: 20150709142637) do
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
   end
+
+  create_table "logs", force: :cascade do |t|
+    t.integer  "election_id"
+    t.string   "origin",                    null: false
+    t.string   "origin_uniq"
+    t.datetime "create_date",               null: false
+    t.string   "hash_alg",                  null: false
+    t.string   "filename"
+    t.integer  "records_count", default: 0
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "logs", ["election_id"], name: "index_logs_on_election_id", using: :btree
+
+  create_table "records", force: :cascade do |t|
+    t.integer  "log_id"
+    t.string   "voter_id",     null: false
+    t.datetime "recorded_at",  null: false
+    t.string   "action",       null: false
+    t.string   "jurisdiction", null: false
+    t.string   "form"
+    t.string   "form_note"
+    t.string   "leo"
+    t.string   "notes"
+    t.string   "comment"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "records", ["log_id"], name: "index_records_on_log_id", using: :btree
 
   create_table "registration_requests", force: :cascade do |t|
     t.string   "organization_name",                 null: false
@@ -110,4 +141,6 @@ ActiveRecord::Schema.define(version: 20150709142637) do
   add_index "users", ["ssh_public_key"], name: "index_users_on_ssh_public_key", unique: true, using: :btree
   add_index "users", ["suspended"], name: "index_users_on_suspended", using: :btree
 
+  add_foreign_key "logs", "elections"
+  add_foreign_key "records", "logs"
 end

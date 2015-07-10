@@ -1,0 +1,27 @@
+admin:
+  account:           office
+  login:             admin
+  salt:              <%= salt = "test" %>
+  crypted_password:  <%= Sorcery::CryptoProviders::BCrypt.encrypt("secret", salt) %>
+  first_name:        Admin
+  last_name:         Smith
+  email:             admin@smith.com
+  admin:             true
+  phone:             1231231231
+  title:             CEO
+  ssh_public_key:
+  suspended:         false
+
+user:
+  account:           office
+  login:             user
+  salt:              <%= salt = "test" %>
+  crypted_password:  <%= Sorcery::CryptoProviders::BCrypt.encrypt("secret", salt) %>
+  first_name:        User
+  last_name:         Smith
+  email:             user@smith.com
+  admin:             false
+  phone:             1231231230
+  title:             Consultant
+  ssh_public_key:
+  suspended:         false

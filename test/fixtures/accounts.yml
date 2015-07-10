@@ -1,0 +1,5 @@
+office:
+  state:      va
+  name:       Office
+  website:    http://office.com
+  suspended:  false
