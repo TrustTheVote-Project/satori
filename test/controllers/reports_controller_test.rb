@@ -8,7 +8,7 @@ class ReportsControllerTest < ActionController::TestCase
 
   test 'events_by_county' do
     get :events_by_county, election_id: election.id
-    assert_not_nil assigns(:data)
+    assert_not_nil assigns(:report)
   end
 
   def election

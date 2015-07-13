@@ -40,7 +40,7 @@ class LogsController < BaseController
   private
 
   def load_election
-    @election = Election.find(params[:election_id])
+    @election = current_account.elections.find(params[:election_id])
   end
 
 end

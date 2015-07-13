@@ -22,7 +22,7 @@ class LogsControllerTest < ActionController::TestCase
     VTL.expects(:parse).returns(log)
     post :create, election_id: election.id, upload: { file: fixture_file_upload('/files/empty.xml', 'application/xml') }
     assert_redirected_to election
-    assert_equal "File uploaded", flash.notice
+    assert_equal "Log uploaded", flash.notice
 
     l = election.logs.last
     assert_equal 'empty.xml', l.filename
