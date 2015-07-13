@@ -3,3 +3,9 @@ office:
   name:       Office
   website:    http://office.com
   suspended:  false
+
+home:
+  state:      va
+  name:       Home
+  website:    http://home.com
+  suspended:  false

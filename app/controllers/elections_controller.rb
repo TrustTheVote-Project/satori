@@ -2,6 +2,10 @@ class ElectionsController < BaseController
 
   before_action :require_user_acc
 
+  rescue_from ActiveRecord::RecordNotFound do
+    redirect_to :dashboard, alert: 'Election not found'
+  end
+
   # new election form
   def new
     @election = Election.new
@@ -9,12 +13,12 @@ class ElectionsController < BaseController
 
   # election
   def show
-    @election = Election.find(params[:id])
+    @election = current_account.elections.find(params[:id])
   end
 
   # creates election
   def create
-    @election = Election.new(elec_params)
+    @election = current_account.elections.build(elec_params)
     if @election.save
       redirect_to @election, notice: "Election created"
     else
@@ -23,7 +27,7 @@ class ElectionsController < BaseController
   end
 
   def destroy
-    Election.find(params[:id]).destroy
+    current_account.elections.find(params[:id]).destroy
     redirect_to :dashboard, notice: "Election deleted"
   end
 

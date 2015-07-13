@@ -1,9 +1,13 @@
 class Record < ActiveRecord::Base
 
+  belongs_to :account
   belongs_to :election
   belongs_to :log
 
+  validates :account, presence: true
+
   before_validation :init_election
+  before_validation :init_account
 
   # sets attributes from the record VTL
   def set_attributes_from_vtl(rec)
@@ -22,6 +26,10 @@ class Record < ActiveRecord::Base
 
   def init_election
     self.election ||= log.try(:election)
+  end
+
+  def init_account
+    self.account_id = self.election.account_id unless self.election.nil?
   end
 
 end

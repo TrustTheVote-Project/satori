@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150710112041) do
+ActiveRecord::Schema.define(version: 20150713045612) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,7 +40,10 @@ ActiveRecord::Schema.define(version: 20150710112041) do
     t.date     "ffd_deadline_on"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
+    t.integer  "account_id"
   end
+
+  add_index "elections", ["account_id"], name: "index_elections_on_account_id", using: :btree
 
   create_table "logs", force: :cascade do |t|
     t.integer  "election_id"
@@ -52,8 +55,10 @@ ActiveRecord::Schema.define(version: 20150710112041) do
     t.integer  "records_count", default: 0
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
+    t.integer  "account_id"
   end
 
+  add_index "logs", ["account_id"], name: "index_logs_on_account_id", using: :btree
   add_index "logs", ["election_id"], name: "index_logs_on_election_id", using: :btree
 
   create_table "records", force: :cascade do |t|
@@ -70,8 +75,10 @@ ActiveRecord::Schema.define(version: 20150710112041) do
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
     t.integer  "election_id"
+    t.integer  "account_id"
   end
 
+  add_index "records", ["account_id"], name: "index_records_on_account_id", using: :btree
   add_index "records", ["election_id"], name: "index_records_on_election_id", using: :btree
   add_index "records", ["log_id"], name: "index_records_on_log_id", using: :btree
 
@@ -143,7 +150,10 @@ ActiveRecord::Schema.define(version: 20150710112041) do
   add_index "users", ["ssh_public_key"], name: "index_users_on_ssh_public_key", unique: true, using: :btree
   add_index "users", ["suspended"], name: "index_users_on_suspended", using: :btree
 
+  add_foreign_key "elections", "accounts"
+  add_foreign_key "logs", "accounts"
   add_foreign_key "logs", "elections"
+  add_foreign_key "records", "accounts"
   add_foreign_key "records", "elections"
   add_foreign_key "records", "logs"
 end

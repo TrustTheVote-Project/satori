@@ -1,5 +1,17 @@
 one:
+  account:             office
   name:                Election One
+  held_on:             2015-07-09
+  voter_start_on:      2015-07-09
+  voter_end_on:        2015-07-09
+  reg_deadline_on:     2015-07-09
+  ab_req_deadline_on:  2015-07-09
+  ab_rec_deadline_on:  2015-07-09
+  ffd_deadline_on:     2015-07-09
+
+home:
+  account:             home
+  name:                Election Two
   held_on:             2015-07-09
   voter_start_on:      2015-07-09
   voter_end_on:        2015-07-09
