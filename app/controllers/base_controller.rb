@@ -5,6 +5,14 @@ class BaseController < ApplicationController
 
   before_action :set_page_id
 
+  protected
+
+  def send_csv(csv, filename)
+    send_data csv,
+      type:         "text/csv; charset=iso-8859-1; header=present",
+      disposition:  "attachment; filename=#{filename}"
+  end
+
   private
 
   def set_page_id

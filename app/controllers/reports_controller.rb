@@ -19,7 +19,7 @@ class ReportsController < BaseController
           end
         end
 
-        render text: csv
+        send_csv csv, "events_by_county.csv"
       end
     end
   end
