@@ -13,12 +13,13 @@ class ElectionsController < BaseController
 
   # election
   def show
-    @election = current_account.elections.find(params[:id])
+    @election = Election.where(account: current_account).find(params[:id])
   end
 
   # creates election
   def create
-    @election = current_account.elections.build(elec_params)
+    @election = Election.new(elec_params)
+    @election.account = current_account
     if @election.save
       redirect_to @election, notice: "Election created"
     else
