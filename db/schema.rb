@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150713045612) do
+ActiveRecord::Schema.define(version: 20150716133548) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,43 @@ ActiveRecord::Schema.define(version: 20150713045612) do
   add_index "accounts", ["state_id"], name: "index_accounts_on_state_id", using: :btree
   add_index "accounts", ["suspended"], name: "index_accounts_on_suspended", using: :btree
 
+  create_table "demog_files", force: :cascade do |t|
+    t.integer  "election_id"
+    t.integer  "account_id"
+    t.string   "filename",    null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "demog_files", ["account_id"], name: "index_demog_files_on_account_id", using: :btree
+  add_index "demog_files", ["election_id"], name: "index_demog_files_on_election_id", using: :btree
+
+  create_table "demog_records", force: :cascade do |t|
+    t.integer "demog_file_id"
+    t.integer "election_id"
+    t.integer "account_id"
+    t.string  "voter_id"
+    t.string  "jurisdiction"
+    t.date    "reg_date"
+    t.integer "year_of_birth"
+    t.string  "reg_status"
+    t.string  "gender"
+    t.string  "race"
+    t.string  "political_party_name"
+    t.boolean "overseas"
+    t.boolean "military"
+    t.boolean "protected"
+    t.boolean "disabled"
+    t.boolean "absentee_ongoing"
+    t.boolean "absentee_in_this_election"
+    t.string  "precinct_split_id"
+    t.string  "zip_code"
+  end
+
+  add_index "demog_records", ["account_id"], name: "index_demog_records_on_account_id", using: :btree
+  add_index "demog_records", ["demog_file_id"], name: "index_demog_records_on_demog_file_id", using: :btree
+  add_index "demog_records", ["election_id"], name: "index_demog_records_on_election_id", using: :btree
+
   create_table "elections", force: :cascade do |t|
     t.string   "name"
     t.date     "held_on"
@@ -44,43 +81,6 @@ ActiveRecord::Schema.define(version: 20150713045612) do
   end
 
   add_index "elections", ["account_id"], name: "index_elections_on_account_id", using: :btree
-
-  create_table "logs", force: :cascade do |t|
-    t.integer  "election_id"
-    t.string   "origin",                    null: false
-    t.string   "origin_uniq"
-    t.datetime "create_date",               null: false
-    t.string   "hash_alg",                  null: false
-    t.string   "filename"
-    t.integer  "records_count", default: 0
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.integer  "account_id"
-  end
-
-  add_index "logs", ["account_id"], name: "index_logs_on_account_id", using: :btree
-  add_index "logs", ["election_id"], name: "index_logs_on_election_id", using: :btree
-
-  create_table "records", force: :cascade do |t|
-    t.integer  "log_id"
-    t.string   "voter_id",     null: false
-    t.datetime "recorded_at",  null: false
-    t.string   "action",       null: false
-    t.string   "jurisdiction", null: false
-    t.string   "form"
-    t.string   "form_note"
-    t.string   "leo"
-    t.string   "notes"
-    t.string   "comment"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-    t.integer  "election_id"
-    t.integer  "account_id"
-  end
-
-  add_index "records", ["account_id"], name: "index_records_on_account_id", using: :btree
-  add_index "records", ["election_id"], name: "index_records_on_election_id", using: :btree
-  add_index "records", ["log_id"], name: "index_records_on_log_id", using: :btree
 
   create_table "registration_requests", force: :cascade do |t|
     t.string   "organization_name",                 null: false
@@ -113,6 +113,43 @@ ActiveRecord::Schema.define(version: 20150713045612) do
   end
 
   add_index "tenet_settings", ["name"], name: "index_tenet_settings_on_name", unique: true, using: :btree
+
+  create_table "transaction_logs", force: :cascade do |t|
+    t.integer  "election_id"
+    t.string   "origin",                    null: false
+    t.string   "origin_uniq"
+    t.datetime "create_date",               null: false
+    t.string   "hash_alg",                  null: false
+    t.string   "filename"
+    t.integer  "records_count", default: 0
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.integer  "account_id"
+  end
+
+  add_index "transaction_logs", ["account_id"], name: "index_transaction_logs_on_account_id", using: :btree
+  add_index "transaction_logs", ["election_id"], name: "index_transaction_logs_on_election_id", using: :btree
+
+  create_table "transaction_records", force: :cascade do |t|
+    t.integer  "log_id"
+    t.string   "voter_id",     null: false
+    t.datetime "recorded_at",  null: false
+    t.string   "action",       null: false
+    t.string   "jurisdiction", null: false
+    t.string   "form"
+    t.string   "form_note"
+    t.string   "leo"
+    t.string   "notes"
+    t.string   "comment"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.integer  "election_id"
+    t.integer  "account_id"
+  end
+
+  add_index "transaction_records", ["account_id"], name: "index_transaction_records_on_account_id", using: :btree
+  add_index "transaction_records", ["election_id"], name: "index_transaction_records_on_election_id", using: :btree
+  add_index "transaction_records", ["log_id"], name: "index_transaction_records_on_log_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.integer  "account_id",                                      null: false
@@ -150,10 +187,15 @@ ActiveRecord::Schema.define(version: 20150713045612) do
   add_index "users", ["ssh_public_key"], name: "index_users_on_ssh_public_key", unique: true, using: :btree
   add_index "users", ["suspended"], name: "index_users_on_suspended", using: :btree
 
+  add_foreign_key "demog_files", "accounts"
+  add_foreign_key "demog_files", "elections"
+  add_foreign_key "demog_records", "accounts"
+  add_foreign_key "demog_records", "demog_files"
+  add_foreign_key "demog_records", "elections"
   add_foreign_key "elections", "accounts"
-  add_foreign_key "logs", "accounts"
-  add_foreign_key "logs", "elections"
-  add_foreign_key "records", "accounts"
-  add_foreign_key "records", "elections"
-  add_foreign_key "records", "logs"
+  add_foreign_key "transaction_logs", "accounts"
+  add_foreign_key "transaction_logs", "elections"
+  add_foreign_key "transaction_records", "accounts"
+  add_foreign_key "transaction_records", "elections"
+  add_foreign_key "transaction_records", "transaction_logs", column: "log_id"
 end

@@ -1,4 +1,4 @@
-class LogsController < BaseController
+class TransactionLogsController < BaseController
 
   before_action :require_user_acc
   before_action :load_election
@@ -8,8 +8,8 @@ class LogsController < BaseController
     file = params[:upload][:file]
     parsed_log = VTL.parse(file)
 
-    Log.transaction do
-      log = @election.logs.build(filename: file.original_filename)
+    TransactionLog.transaction do
+      log = @election.transaction_logs.build(filename: file.original_filename)
       log.set_attributes_from_vtl(parsed_log)
 
       if log.save
@@ -33,7 +33,7 @@ class LogsController < BaseController
 
   # removes the log
   def destroy
-    @election.logs.find(params[:id]).destroy
+    @election.transaction_logs.find(params[:id]).destroy
     redirect_to @election, notice: "Log deleted"
   end
 

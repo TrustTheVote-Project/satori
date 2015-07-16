@@ -8,7 +8,7 @@
 .row
   .col-sm-12
     %h3 Upload New Voter Transaction Log
-    = form_for :upload, url: [ @election, :logs ], html: { multipart: true, class: 'form' } do |f|
+    = form_for :upload, url: [ @election, :transaction_logs ], html: { multipart: true, class: 'form' } do |f|
       .form-group
         .row
           .col-sm-3

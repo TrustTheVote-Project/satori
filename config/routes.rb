@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get "/dashboard" => "user_dashboard#show", as: 'dashboard'
 
   resources :elections, only: [ :show, :new, :create, :destroy ] do
-    resources :logs
+    resources :transaction_logs
     resources :voters
 
     get '/reports/events_by_county' => 'reports#events_by_county', as: 'events_by_county_report'

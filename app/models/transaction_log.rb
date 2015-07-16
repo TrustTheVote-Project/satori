@@ -1,8 +1,8 @@
-class Log < ActiveRecord::Base
+class TransactionLog < ActiveRecord::Base
 
   belongs_to :account
   belongs_to :election
-  has_many   :records, dependent: :delete_all
+  has_many   :records, foreign_key: 'log_id', class_name: 'TransactionRecord', dependent: :delete_all
 
   validates :account, presence: true
   validates :filename, presence: true

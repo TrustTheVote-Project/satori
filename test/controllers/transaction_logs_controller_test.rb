@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class LogsControllerTest < ActionController::TestCase
+class TransactionLogsControllerTest < ActionController::TestCase
 
   include Sorcery::TestHelpers::Rails::Controller
 
@@ -24,7 +24,7 @@ class LogsControllerTest < ActionController::TestCase
     assert_redirected_to election
     assert_equal "Log uploaded", flash.notice
 
-    l = election.logs.last
+    l = election.transaction_logs.last
     assert_equal 'empty.xml', l.filename
     assert_equal 'VA Data', l.origin
     assert_equal 'OU', l.origin_uniq

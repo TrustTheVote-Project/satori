@@ -1,8 +1,8 @@
-class Record < ActiveRecord::Base
+class TransactionRecord < ActiveRecord::Base
 
   belongs_to :account
   belongs_to :election
-  belongs_to :log
+  belongs_to :log, class_name: 'TransactionLog'
 
   validates :account, presence: true
 
