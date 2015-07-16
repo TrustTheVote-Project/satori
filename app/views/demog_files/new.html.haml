@@ -8,7 +8,7 @@
 .row
   .col-sm-12
     %h3 Upload New Voter Demographics
-    = form_for :upload, url: [ @election, :voters ], html: { multipart: true, class: 'form' } do |f|
+    = form_for :upload, url: [ @election, :demog_files ], html: { multipart: true, class: 'form' } do |f|
       .form-group
         .row
           .col-sm-3
