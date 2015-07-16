@@ -6,8 +6,8 @@ class DemogRecordTest < ActiveSupport::TestCase
     f = demog_files(:one)
     r = DemogRecord.new(file: f)
     r.valid?
-    assert_equal f.election, r.election
-    assert_equal f.account, r.account
+    assert_equal f.election.id, r.election_id
+    assert_equal f.account.id, r.account_id
   end
 
   test "field coercion" do

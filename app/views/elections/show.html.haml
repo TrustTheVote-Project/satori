@@ -27,7 +27,7 @@
             %td= l.origin
             %td= l.create_date.strftime("%B %d, %Y %l:%M%p")
             %td.text-right
-              = link_to [ @election, l ], method: 'delete', data: { confirm: 'Delete this log?' }, class: 'btn btn-xs btn-danger' do
+              = link_to [ @election, l ], method: 'delete', data: { confirm: 'Delete this file?' }, class: 'btn btn-xs btn-danger' do
                 .glyphicon.glyphicon-remove
 
   .col-sm-6
@@ -35,15 +35,25 @@
       .col-sm-9
         %h3 Voters
       .col-sm-3
-        = link_to "Upload voters", [ :new, @election, :voter ], class: 'btn btn-default'
+        = link_to "Upload voters", [ :new, @election, :demog_file ], class: 'btn btn-default'
 
     %table.table
       %thead
         %tr
           %th Filename
+          %th Uploaded on
           %th
-      %tr
-        %td{ colspan: 2 } No voters loaded yet
+      - if @election.demog_files.blank?
+        %tr
+          %td{ colspan: 2 } No demographics loaded yet
+      - else
+        - @election.demog_files.each do |f|
+          %tr
+            %td= f.filename
+            %td= f.created_at.strftime("%B %d, %Y %l:%M%p")
+            %td.text-right
+              = link_to [ @election, f ], method: 'delete', data: { confirm: 'Delete this log?' }, class: 'btn btn-xs btn-danger' do
+                .glyphicon.glyphicon-remove
 
 .row
   .col-sm-12
