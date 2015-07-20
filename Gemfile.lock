@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:TrustTheVote-Project/demog.git
-  revision: f34bdd14629a4ebc7b325f01955b498489c9933e
+  revision: f9fa3a41aa92f01ad8969b61930f6089e672f8ff
   specs:
     demog (1.0.0)
       hashie
@@ -9,9 +9,10 @@ GIT
 
 GIT
   remote: git@github.com:TrustTheVote-Project/vtl.git
-  revision: 438944db3ac67f18a8cd7b58363d55fc4fc90a7e
+  revision: 5ab18e1824df28375241ae93d1728531493a495a
   specs:
     vtl (1.0.0)
+      hashie
       nokogiri
       timeliness
 
@@ -75,6 +76,10 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     arel (6.0.2)
+    babel-source (5.6.20)
+    babel-transpiler (0.7.0)
+      babel-source (>= 4.0, < 6)
+      execjs (~> 2.0)
     bcrypt (3.1.10)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -280,6 +285,13 @@ GEM
       ffi (>= 0.5.0)
     rdoc (4.2.0)
       json (~> 1.4)
+    react-rails (1.1.0)
+      babel-transpiler (>= 0.7.0)
+      coffee-script-source (~> 1.8)
+      connection_pool
+      execjs
+      rails (>= 3.2)
+      tilt
     redis (3.0.7)
     redis-actionpack (4.0.0)
       actionpack (~> 4)
@@ -378,6 +390,7 @@ DEPENDENCIES
   pg
   quiet_assets
   rails (= 4.2.3)
+  react-rails
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   spring

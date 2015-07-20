@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :elections, only: [ :show, :new, :create, :destroy ] do
     resources :transaction_logs
     resources :demog_files
+    resources :upload_jobs, only: [ :destroy ]
 
     get '/reports/events_by_county' => 'reports#events_by_county', as: 'events_by_county_report'
   end

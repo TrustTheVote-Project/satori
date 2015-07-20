@@ -5,6 +5,7 @@ class Election < ActiveRecord::Base
   has_many :demog_files, dependent: :destroy
   has_many :records, class_name: 'TransactionRecord'
   has_many :voters, class_name: 'DemogRecord'
+  has_many :upload_jobs, dependent: :nullify
 
   validates :account, presence: true
   validates :name, presence: true

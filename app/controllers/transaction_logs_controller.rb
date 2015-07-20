@@ -3,32 +3,22 @@ class TransactionLogsController < BaseController
   before_action :require_user_acc
   before_action :load_election
 
+  # lists transaction logs
+  def index
+    @logs    = @election.transaction_logs
+    @uploads = @election.upload_jobs.vtl.active
+    @errors  = @election.upload_jobs.vtl.errors
+  end
+
   # parses the upload and creates log and records
   def create
     file = params[:upload][:file]
-    parsed_log = VTL.parse(file)
 
-    TransactionLog.transaction do
-      log = @election.transaction_logs.build(filename: file.original_filename)
-      log.set_attributes_from_vtl(parsed_log)
+    job = @election.upload_jobs.create(url: file.path, kind: UploadJob::VTL, state: UploadJob::PENDING)
 
-      if log.save
-        parsed_log.records.each do |pr|
-          rec = log.records.build
-          rec.set_attributes_from_vtl(pr)
-          unless rec.save
-            raise "Failed to save record: #{rec.errors.full_messages}"
-          end
-        end
-      else
-        raise "Failed to save log: #{log.errors.full_messages}"
-      end
-    end
+    Uploader.perform_async(job.id)
 
     redirect_to @election, notice: "Log uploaded"
-  rescue VTL::ValidationError => e
-    flash.now.alert = "Failed to parse VTL: #{e.message}"
-    render :new
   end
 
   # removes the log

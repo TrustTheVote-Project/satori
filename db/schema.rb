@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150716133548) do
+ActiveRecord::Schema.define(version: 20150720065824) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -151,6 +151,21 @@ ActiveRecord::Schema.define(version: 20150716133548) do
   add_index "transaction_records", ["election_id"], name: "index_transaction_records_on_election_id", using: :btree
   add_index "transaction_records", ["log_id"], name: "index_transaction_records_on_log_id", using: :btree
 
+  create_table "upload_jobs", force: :cascade do |t|
+    t.string   "uuid",                    null: false
+    t.integer  "election_id"
+    t.string   "url",                     null: false
+    t.string   "kind",                    null: false
+    t.string   "state",                   null: false
+    t.integer  "progress",    default: 0, null: false
+    t.string   "error"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "upload_jobs", ["election_id"], name: "index_upload_jobs_on_election_id", using: :btree
+  add_index "upload_jobs", ["uuid"], name: "index_upload_jobs_on_uuid", using: :btree
+
   create_table "users", force: :cascade do |t|
     t.integer  "account_id",                                      null: false
     t.string   "login",                                           null: false
@@ -198,4 +213,5 @@ ActiveRecord::Schema.define(version: 20150716133548) do
   add_foreign_key "transaction_records", "accounts"
   add_foreign_key "transaction_records", "elections"
   add_foreign_key "transaction_records", "transaction_logs", column: "log_id"
+  add_foreign_key "upload_jobs", "elections"
 end

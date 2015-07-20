@@ -35,6 +35,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem "tenet", git: "https://github.com/trustthevote/Tenet-Framework.git", branch: "rails-4-2-3"
 gem "vtl", git: "git@github.com:TrustTheVote-Project/vtl.git"
 gem "demog", git: "git@github.com:TrustTheVote-Project/demog.git"
+gem "react-rails"
 
 group :development do
   gem 'capistrano-rails'

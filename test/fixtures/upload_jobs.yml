@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  uuid: MyString
+  election_id: 
+  url: MyString
+  kind: MyString
+  state: MyString
+  progress: 1
+  error: MyString
+
+two:
+  uuid: MyString
+  election_id: 
+  url: MyString
+  kind: MyString
+  state: MyString
+  progress: 1
+  error: MyString
