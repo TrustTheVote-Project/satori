@@ -11,15 +11,20 @@ class ReportsController < BaseController
     respond_to do |format|
       format.html
       format.csv do
-        csv = CSV.generate do |c|
-          c << @report.columns.unshift("Jurisdiction")
-
-          @report.rows.each do |county, values|
-            c << @report.columns.map { |co| values[co] }.unshift(county)
-          end
-        end
-
+        csv = jurisdiction_report_csv(@report)
         send_csv csv, "events_by_county.csv"
+      end
+    end
+  end
+
+  def events_by_county_by_demog
+    @report = EventsByCountyByDemogReport.new(@election)
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        csv = jurisdiction_report_csv(@report)
+        send_csv csv, "events_by_county_by_demographics.csv"
       end
     end
   end
@@ -28,6 +33,16 @@ class ReportsController < BaseController
 
   def load_election
     @election = Election.where(account: current_account).find(params[:election_id])
+  end
+
+  def jurisdiction_report_csv(report)
+    return CSV.generate do |c|
+      c << report.columns.unshift("Jurisdiction")
+
+      report.rows.each do |county, values|
+        c << report.columns.map { |co| values[co] }.unshift(county)
+      end
+    end
   end
 
 end

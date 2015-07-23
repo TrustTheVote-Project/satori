@@ -23,6 +23,8 @@ class Uploader
       job.finish!
     end
   rescue => e
+    logger.fatal e.message
+    logger.fatal e.backtrace
     job.abort!(e.message)
   end
 
@@ -40,6 +42,8 @@ class Uploader
       job.finish!
     end
   rescue => e
+    logger.fatal e.message
+    logger.fatal e.backtrace
     job.abort!(e.message)
   end
 
@@ -65,8 +69,12 @@ class Uploader
     def parsed_record(record)
       rec = @log.records.build
       rec.set_attributes_from_vtl(record)
-      unless rec.save
-        raise "Failed to save record: #{rec.errors.full_messages}"
+      if rec.valid?
+        rec.save
+      else
+        # DEBUG skip missing action nodes
+        return unless rec.errors[:action].blank?
+        raise "Failed to save record: #{rec.errors.full_messages.join(', ')}"
       end
     end
 
@@ -102,8 +110,10 @@ class Uploader
       rec = @file.records.build
       rec.set_attributes_from_demog(record)
       rec.election_id = @file.election_id
-      unless rec.save
-        raise "Failed to save record: #{rec.errors.full_messages}"
+      if rec.valid?
+        rec.save
+      else
+        raise "Failed to save record: #{rec.errors.full_messages.join(', ')}"
       end
     end
 

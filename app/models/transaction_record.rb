@@ -5,6 +5,10 @@ class TransactionRecord < ActiveRecord::Base
   belongs_to :log, class_name: 'TransactionLog'
 
   validates :account, presence: true
+  validates :action,  presence: true
+  validates :voter_id, presence: true
+  validates :recorded_at, presence: true
+  validates :jurisdiction, presence: true
 
   before_validation :init_election
   before_validation :init_account

@@ -96,8 +96,10 @@ LogRow = React.createClass
 UploadRow = React.createClass
   render: ->
     u = @props.upload
-    fileParts = u.url.split('/')
-    file = fileParts[fileParts.length - 1]
+    file = u.filename
+    if !file
+      fileParts = u.url.split('/')
+      file = fileParts[fileParts.length - 1]
     `<tr>
       <td colSpan='3'>{file}</td>
       <td>{u.state}</td>

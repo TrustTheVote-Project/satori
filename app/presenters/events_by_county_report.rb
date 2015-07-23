@@ -9,7 +9,7 @@ class EventsByCountyReport
       j = r.jurisdiction
       a = r.action
       f = r.form
-      key = "#{a} - #{f}"
+      key = "#{a} #{f}"
 
       @columns << key unless @columns.include?(key)
 

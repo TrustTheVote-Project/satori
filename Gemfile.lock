@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: git@github.com:TrustTheVote-Project/vtl.git
-  revision: 5ab18e1824df28375241ae93d1728531493a495a
+  revision: 4924cbd522c4e4fed512dc97c7930464625a465e
   specs:
     vtl (1.0.0)
       hashie

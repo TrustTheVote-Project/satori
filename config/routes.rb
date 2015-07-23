@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     resources :upload_jobs, only: [ :destroy ]
 
     get '/reports/events_by_county' => 'reports#events_by_county', as: 'events_by_county_report'
+    get '/reports/events_by_county_by_demog' => 'reports#events_by_county_by_demog', as: 'events_by_county_by_demog_report'
   end
 
   # The priority is based upon order of creation: first created -> highest priority.
