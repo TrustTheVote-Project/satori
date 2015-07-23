@@ -14,11 +14,14 @@ class DemogFilesController < BaseController
   def create
     file = params[:upload][:file]
 
-    job = @election.upload_jobs.create(url: file.path, kind: UploadJob::DEMOG, state: UploadJob::PENDING)
+    job = @election.upload_jobs.build(url: file.path, filename: file.original_filename, kind: UploadJob::DEMOG, state: UploadJob::PENDING)
 
-    Uploader.perform_async(job.id)
-
-    redirect_to @election, notice: "Demographics data uploaded"
+    if job.save
+      Uploader.perform_async(job.id)
+      redirect_to @election, notice: "Demographics data uploaded and parsing scheduled"
+    else
+      render :new
+    end
   end
 
   # removes the log

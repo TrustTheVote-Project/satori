@@ -14,11 +14,14 @@ class TransactionLogsController < BaseController
   def create
     file = params[:upload][:file]
 
-    job = @election.upload_jobs.create(url: file.path, kind: UploadJob::VTL, state: UploadJob::PENDING)
+    job = @election.upload_jobs.build(url: file.path, filename: file.original_filename, kind: UploadJob::VTL, state: UploadJob::PENDING)
 
-    Uploader.perform_async(job.id)
-
-    redirect_to @election, notice: "Log uploaded"
+    if job.save
+      Uploader.perform_async(job.id)
+      redirect_to @election, notice: "Log uploaded and parsing scheduled"
+    else
+      render :new
+    end
   end
 
   # removes the log

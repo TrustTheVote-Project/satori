@@ -14,7 +14,7 @@ class Uploader
 
     job.start!
     TransactionLog.transaction do
-      handler = VTLParseHandler.new(job.election)
+      handler = VTLParseHandler.new(job.election, job.filename)
       if job.url =~ /^http/
         VTL.parse_uri(job.url, handler)
       else
@@ -31,7 +31,7 @@ class Uploader
 
     job.start!
     DemogFile.transaction do
-      handler = DemogParseHandler.new(job.election)
+      handler = DemogParseHandler.new(job.election, job.filename)
       if job.url =~ /^http/
         Demog.parse_uri(job.url, handler)
       else
@@ -41,31 +41,18 @@ class Uploader
     end
   rescue => e
     job.abort!(e.message)
-
-#       file = @election.demog_files.build(filename: xml_file.original_filename)
-#       if file.save
-#         account_id = file.account_id
-#         election_id = file.election_id
-
-#         Demog.parse(xml_file.path) do |r|
-#           file.records.create!(r.merge(account_id: account_id, election_id: election_id).permit!)
-#         end
-#       else
-#         raise "Failed to save demographics file: #{file.errors.full_messages}"
-#       end
-#     end
-
   end
 
   # Log parsing handler
   class VTLParseHandler
-    def initialize(election)
+    def initialize(election, filename)
       @election = election
+      @filename = filename
     end
 
     def parsed_header(header)
       @log = @election.transaction_logs.build
-      @log.filename    = header.filename
+      @log.filename    = @filename || header.filename
       @log.origin      = header.origin
       @log.origin_uniq = header.origin_uniq
       @log.create_date = header.create_date
@@ -94,13 +81,14 @@ class Uploader
 
   # Log parsing handler
   class DemogParseHandler
-    def initialize(election)
+    def initialize(election, filename)
       @election = election
+      @filename = filename
     end
 
     def parsed_header(header)
       @file = @election.demog_files.build
-      @file.filename    = header.filename
+      @file.filename    = @filename || header.filename
       # @log.origin      = header.origin
       # @log.origin_uniq = header.origin_uniq
       # @log.create_date = header.create_date

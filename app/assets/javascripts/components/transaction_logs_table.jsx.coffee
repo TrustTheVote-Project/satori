@@ -106,8 +106,11 @@ UploadRow = React.createClass
 ErrorRow = React.createClass
   render: ->
     u = @props.error
-    fileParts = u.url.split('/')
-    file = fileParts[fileParts.length - 1]
+    file = u.filename
+    if !file
+      fileParts = u.url.split('/')
+      file = fileParts[fileParts.length - 1]
+
     `<tr>
       <td colSpan='3'>
         <p>{file}</p>
