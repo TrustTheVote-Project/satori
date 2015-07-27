@@ -115,42 +115,57 @@ CREATE TABLE transaction_records (
 
 
 --
--- Name: counts_by_locality_by_gender; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+-- Name: counts_by_locality_by_demog; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE MATERIALIZED VIEW counts_by_locality_by_gender AS
- SELECT t.election_id,
-    t.jurisdiction,
-    concat(t.action, (' - '::text || (t.form)::text), (' - '::text || (d.gender)::text)) AS key,
+CREATE MATERIALIZED VIEW counts_by_locality_by_demog AS
+ WITH records AS (
+         SELECT t.election_id,
+            t.jurisdiction,
+            t.action,
+            t.form,
+            COALESCE(d.gender, 'No gender'::character varying) AS gender,
+                CASE
+                    WHEN (d.overseas = false) THEN 'Local'::text
+                    WHEN (d.overseas = true) THEN 'UOCAVA'::text
+                    ELSE 'No overseas'::text
+                END AS overseas
+           FROM (transaction_records t
+             LEFT JOIN demog_records d ON (((t.voter_id)::text = (d.voter_id)::text)))
+          WHERE (t.election_id = d.election_id)
+        )
+ SELECT records.election_id,
+    records.jurisdiction,
+    1 AS section,
+    concat(records.action, (' - '::text || (records.gender)::text)) AS key,
     count(*) AS cnt
-   FROM (transaction_records t
-     LEFT JOIN demog_records d ON (((t.voter_id)::text = (d.voter_id)::text)))
-  WHERE (t.election_id = d.election_id)
-  GROUP BY t.election_id, t.jurisdiction, concat(t.action, (' - '::text || (t.form)::text), (' - '::text || (d.gender)::text))
-  WITH NO DATA;
-
-
---
--- Name: counts_by_locality_by_uocava; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE MATERIALIZED VIEW counts_by_locality_by_uocava AS
- SELECT t.election_id,
-    t.jurisdiction,
-    concat(t.action, (' - '::text || (t.form)::text), (' - '::text ||
-        CASE
-            WHEN (d.overseas = false) THEN 'Local'::text
-            ELSE 'UOCAVA'::text
-        END)) AS key,
+   FROM records
+  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || (records.gender)::text))
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    2 AS section,
+    concat(records.action, (' - '::text || records.overseas)) AS key,
     count(*) AS cnt
-   FROM (transaction_records t
-     LEFT JOIN demog_records d ON (((t.voter_id)::text = (d.voter_id)::text)))
-  WHERE (t.election_id = d.election_id)
-  GROUP BY t.election_id, t.jurisdiction, concat(t.action, (' - '::text || (t.form)::text), (' - '::text ||
-        CASE
-            WHEN (d.overseas = false) THEN 'Local'::text
-            ELSE 'UOCAVA'::text
-        END))
+   FROM records
+  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || records.overseas))
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    3 AS section,
+    concat(records.action, (' - '::text || (records.form)::text), (' - '::text || (records.gender)::text)) AS key,
+    count(*) AS cnt
+   FROM records
+  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || (records.form)::text), (' - '::text || (records.gender)::text))
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    4 AS section,
+    concat(records.action, (' - '::text || (records.form)::text), (' - '::text || records.overseas)) AS key,
+    count(*) AS cnt
+   FROM records
+  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || (records.form)::text), (' - '::text || records.overseas))
+  ORDER BY 3, 4
   WITH NO DATA;
 
 
@@ -1037,4 +1052,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150723114119');
 INSERT INTO schema_migrations (version) VALUES ('20150723132720');
 
 INSERT INTO schema_migrations (version) VALUES ('20150723133323');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727073117');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727081034');
 
