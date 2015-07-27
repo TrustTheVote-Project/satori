@@ -64,6 +64,55 @@ ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
 
 
 --
+-- Name: transaction_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE transaction_records (
+    id integer NOT NULL,
+    log_id integer,
+    voter_id character varying NOT NULL,
+    recorded_at timestamp without time zone NOT NULL,
+    action character varying NOT NULL,
+    jurisdiction character varying NOT NULL,
+    form character varying,
+    form_note character varying,
+    leo character varying,
+    notes character varying,
+    comment character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    election_id integer,
+    account_id integer
+);
+
+
+--
+-- Name: counts_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW counts_by_locality AS
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    1 AS section,
+    concat(transaction_records.action, ' - ', transaction_records.form) AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE (transaction_records.form IS NOT NULL)
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, concat(transaction_records.action, ' - ', transaction_records.form)
+UNION ALL
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    2 AS section,
+    'Other'::text AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE (transaction_records.form IS NULL)
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, 'Other'::text
+  ORDER BY 3, 2, 4
+  WITH NO DATA;
+
+
+--
 -- Name: demog_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -92,29 +141,6 @@ CREATE TABLE demog_records (
 
 
 --
--- Name: transaction_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE transaction_records (
-    id integer NOT NULL,
-    log_id integer,
-    voter_id character varying NOT NULL,
-    recorded_at timestamp without time zone NOT NULL,
-    action character varying NOT NULL,
-    jurisdiction character varying NOT NULL,
-    form character varying,
-    form_note character varying,
-    leo character varying,
-    notes character varying,
-    comment character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    election_id integer,
-    account_id integer
-);
-
-
---
 -- Name: counts_by_locality_by_demog; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -133,39 +159,73 @@ CREATE MATERIALIZED VIEW counts_by_locality_by_demog AS
            FROM (transaction_records t
              LEFT JOIN demog_records d ON (((t.voter_id)::text = (d.voter_id)::text)))
           WHERE (t.election_id = d.election_id)
+        ), valid_records AS (
+         SELECT records.election_id,
+            records.jurisdiction,
+            records.action,
+            records.form,
+            records.gender,
+            records.overseas
+           FROM records
+          WHERE (records.form IS NOT NULL)
+        ), invalid_records AS (
+         SELECT records.election_id,
+            records.jurisdiction,
+            records.action,
+            records.form,
+            records.gender,
+            records.overseas
+           FROM records
+          WHERE (records.form IS NULL)
         )
- SELECT records.election_id,
-    records.jurisdiction,
+ SELECT valid_records.election_id,
+    valid_records.jurisdiction,
     1 AS section,
-    concat(records.action, (' - '::text || (records.gender)::text)) AS key,
+    concat(valid_records.action, (' - '::text || (valid_records.gender)::text)) AS key,
     count(*) AS cnt
-   FROM records
-  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || (records.gender)::text))
+   FROM valid_records
+  GROUP BY valid_records.election_id, valid_records.jurisdiction, concat(valid_records.action, (' - '::text || (valid_records.gender)::text))
 UNION ALL
- SELECT records.election_id,
-    records.jurisdiction,
+ SELECT valid_records.election_id,
+    valid_records.jurisdiction,
     2 AS section,
-    concat(records.action, (' - '::text || records.overseas)) AS key,
+    concat(valid_records.action, (' - '::text || valid_records.overseas)) AS key,
     count(*) AS cnt
-   FROM records
-  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || records.overseas))
+   FROM valid_records
+  GROUP BY valid_records.election_id, valid_records.jurisdiction, concat(valid_records.action, (' - '::text || valid_records.overseas))
 UNION ALL
- SELECT records.election_id,
-    records.jurisdiction,
+ SELECT valid_records.election_id,
+    valid_records.jurisdiction,
     3 AS section,
-    concat(records.action, (' - '::text || (records.form)::text), (' - '::text || (records.gender)::text)) AS key,
+    concat(valid_records.action, (' - '::text || (valid_records.form)::text), (' - '::text || (valid_records.gender)::text)) AS key,
     count(*) AS cnt
-   FROM records
-  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || (records.form)::text), (' - '::text || (records.gender)::text))
+   FROM valid_records
+  GROUP BY valid_records.election_id, valid_records.jurisdiction, concat(valid_records.action, (' - '::text || (valid_records.form)::text), (' - '::text || (valid_records.gender)::text))
 UNION ALL
- SELECT records.election_id,
-    records.jurisdiction,
+ SELECT valid_records.election_id,
+    valid_records.jurisdiction,
     4 AS section,
-    concat(records.action, (' - '::text || (records.form)::text), (' - '::text || records.overseas)) AS key,
+    concat(valid_records.action, (' - '::text || (valid_records.form)::text), (' - '::text || valid_records.overseas)) AS key,
     count(*) AS cnt
-   FROM records
-  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || (records.form)::text), (' - '::text || records.overseas))
-  ORDER BY 3, 4
+   FROM valid_records
+  GROUP BY valid_records.election_id, valid_records.jurisdiction, concat(valid_records.action, (' - '::text || (valid_records.form)::text), (' - '::text || valid_records.overseas))
+UNION ALL
+ SELECT invalid_records.election_id,
+    invalid_records.jurisdiction,
+    5 AS section,
+    concat(('Other - '::text || (invalid_records.gender)::text)) AS key,
+    count(*) AS cnt
+   FROM invalid_records
+  GROUP BY invalid_records.election_id, invalid_records.jurisdiction, concat(('Other - '::text || (invalid_records.gender)::text))
+UNION ALL
+ SELECT invalid_records.election_id,
+    invalid_records.jurisdiction,
+    6 AS section,
+    concat(('Other - '::text || invalid_records.overseas)) AS key,
+    count(*) AS cnt
+   FROM invalid_records
+  GROUP BY invalid_records.election_id, invalid_records.jurisdiction, concat(('Other - '::text || invalid_records.overseas))
+  ORDER BY 3, 2, 4
   WITH NO DATA;
 
 
@@ -1056,4 +1116,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150723133323');
 INSERT INTO schema_migrations (version) VALUES ('20150727073117');
 
 INSERT INTO schema_migrations (version) VALUES ('20150727081034');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727101036');
 

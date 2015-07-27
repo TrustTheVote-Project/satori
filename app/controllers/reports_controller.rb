@@ -6,7 +6,7 @@ class ReportsController < BaseController
   before_action :load_election
 
   def events_by_county
-    @report = EventsByCountyReport.new(@election.records.select("jurisdiction, action, form, count(*) as cnt").group("jurisdiction, action, form").order(:jurisdiction))
+    @report = EventsByCountyReport.new(@election)
 
     respond_to do |format|
       format.html

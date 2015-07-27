@@ -9,7 +9,7 @@
       %thead
         %th Jurisdiction
         - @report.columns.each do |c|
-          %th= c
+          %th= raw c
 
       %tbody
         - @report.rows.each do |county, values|

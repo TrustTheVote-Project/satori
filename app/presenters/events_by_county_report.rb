@@ -1,15 +1,12 @@
 class EventsByCountyReport
 
-  def initialize(data)
-    @data = data
+  def initialize(election)
     @columns = []
     @counties = {}
 
-    @data.each do |r|
-      j = r.jurisdiction
-      a = r.action
-      f = r.form
-      key = "#{a} #{f}"
+    Reports::CountsByLocality.where(election_id: election.id).each do |r|
+      j   = r.jurisdiction
+      key = r.key.gsub('- ', '<br/>')
 
       @columns << key unless @columns.include?(key)
 
@@ -17,8 +14,6 @@ class EventsByCountyReport
       cdata[key] = r.cnt
       @counties[j] = cdata
     end
-
-    @columns = @columns.sort
   end
 
   def columns
