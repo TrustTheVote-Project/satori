@@ -37,10 +37,10 @@ class ReportsController < BaseController
 
   def jurisdiction_report_csv(report)
     return CSV.generate do |c|
-      c << report.columns.unshift("Jurisdiction")
+      c << [ "Jurisdiction" ] + report.columns
 
       report.rows.each do |county, values|
-        c << report.columns.map { |co| values[co] }.unshift(county)
+        c << [ county ] + report.columns.map { |co| values[co] }
       end
     end
   end
