@@ -20,6 +20,7 @@ class Uploader
       else
         VTL.parse_file(job.url, handler)
       end
+      Reports.refresh
       job.finish!
     end
   rescue => e
@@ -39,6 +40,7 @@ class Uploader
       else
         Demog.parse_file(job.url, handler)
       end
+      Reports.refresh
       job.finish!
     end
   rescue => e

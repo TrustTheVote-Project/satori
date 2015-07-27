@@ -26,7 +26,10 @@ class TransactionLogsController < BaseController
 
   # removes the log
   def destroy
-    @election.transaction_logs.find(params[:id]).destroy
+    if @election.transaction_logs.find(params[:id]).destroy
+      Reports.refresh
+    end
+
     redirect_to @election, notice: "Log deleted"
   end
 

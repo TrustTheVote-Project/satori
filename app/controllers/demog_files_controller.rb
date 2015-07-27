@@ -26,7 +26,10 @@ class DemogFilesController < BaseController
 
   # removes the log
   def destroy
-    @election.demog_files.find(params[:id]).destroy
+    if @election.demog_files.find(params[:id]).destroy
+      Reports.refresh
+    end
+
     redirect_to @election, notice: "Log deleted"
   end
 
