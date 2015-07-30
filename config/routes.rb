@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   get "/dashboard" => "user_dashboard#show", as: 'dashboard'
 
-  resources :elections, only: [ :show, :new, :create, :destroy ] do
+  resources :elections do
     resources :transaction_logs
     resources :demog_files
     resources :upload_jobs, only: [ :destroy ]

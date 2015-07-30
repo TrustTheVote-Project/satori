@@ -297,7 +297,8 @@ CREATE TABLE elections (
     ffd_deadline_on date,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    account_id integer
+    account_id integer,
+    owner_id integer
 );
 
 
@@ -815,6 +816,13 @@ CREATE INDEX index_elections_on_account_id ON elections USING btree (account_id)
 
 
 --
+-- Name: index_elections_on_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_elections_on_owner_id ON elections USING btree (owner_id);
+
+
+--
 -- Name: index_registration_requests_on_archived; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1118,4 +1126,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150727073117');
 INSERT INTO schema_migrations (version) VALUES ('20150727081034');
 
 INSERT INTO schema_migrations (version) VALUES ('20150727101036');
+
+INSERT INTO schema_migrations (version) VALUES ('20150730075527');
 

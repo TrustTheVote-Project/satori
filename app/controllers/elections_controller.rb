@@ -20,6 +20,7 @@ class ElectionsController < BaseController
   def create
     @election = Election.new(elec_params)
     @election.account = current_account
+    @election.owner   = current_user
     if @election.save
       redirect_to @election, notice: "Election created"
     else

@@ -1,23 +1,41 @@
 .row
   .col-sm-12
-    %h3 Elections
+    %h3= t '.title'
+    %p.welcome= raw t '.welcome', user: current_user.full_name, org: current_user.account.name, elections: pluralize(@elections.count, 'recent election')
 
-    .pull-right
-      = link_to "New Election", :new_election, class: 'btn btn-primary'
+    = section_row t('.elections'), 'elections', state: 'always_open'
+    .row
+      .col-sm-2
+        = link_to t('.new_election'), :new_election, class: 'btn btn-primary'
+      .col-sm-10
+        .checkbox
+          %label
+            = check_box_tag 'current_elections'
+            Show current elections
+    .row
+      .col-sm-12
+        %table.table.table-striped
+          - if @elections.empty?
+            %tr
+              %td= t '.none'
+          - else
+            - @elections.each do |e|
+              %tr
+                %td
+                  %p
+                    Election Name: #{link_to e.name, e}<br/>
+                    Election Date: #{e.held_on.try(:strftime, "%d %B %Y")}<br/>
+                    Start/End Dates for Reporting: #{e.voter_start_on.try(:strftime, "%d %B %Y")} - #{e.voter_end_on.try(:strftime, "%d %B %Y")}<br/>
+                    Owner: #{e.owner.try(:full_name) || 'Unknown'}
+                  %p
+                    = link_to "Election Profile", [ :edit, e ], class: 'btn btn-xs btn-info'
+                    = link_to "Election Analytics", e, class: 'btn btn-xs btn-info'
+                    = link_to "Delete", e, method: 'delete', data: { confirm: 'Delete this election?' }, class: 'btn btn-xs btn-danger'
 
-    %table.table
-      %thead
-        %tr
-          %th Elections
-          %th
+    = section_row t('.your_team'), 'your-team'
+    .row.section.collapse#your-team
+      %p Lorem ipsum
 
-      - if @elections.empty?
-        %tr
-          %td{ colspan: 2 } There are no elections yet
-      - else
-        - @elections.each do |e|
-          %tr
-            %td= link_to e.name, e
-            %td.col-sm-1.text-right
-              = link_to e, method: 'delete', data: { confirm: 'Delete this election?' }, class: 'btn btn-xs btn-danger' do
-                .glyphicon.glyphicon-remove
+    = section_row t('.recent_activity'), 'recent-activity'
+    .row.section.collapse#recent-activity
+      %p Lorem ipsum
