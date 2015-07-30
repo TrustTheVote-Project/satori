@@ -1,5 +1,23 @@
 .page-header
-  %h2 Election Details
+  %h2 Election Performance Analytics for: #{@election.name}
+  %p Lorem ipsum
+
+= section_row "Election Profile", 'profile'
+.row.section.collapse#profile
+  .col-sm-6
+    %table.table.table-bordered.table-padded
+      %tr
+        %td.col-sm-6 Election Name
+        %td= @election.name
+      %tr
+        %td Election Date
+        %td= @election.held_on.try(:strftime, "%d %B %Y")
+      %tr
+        %td Start/End Dates for Reporting
+        %td #{@election.voter_start_on.try(:strftime, "%d %B %Y")} - #{@election.voter_end_on.try(:strftime, "%d %B %Y")}
+      %tr
+        %td Owner
+        %td= @election.owner.try(:full_name) || 'Unknown'
 
 .row
   .col-sm-6

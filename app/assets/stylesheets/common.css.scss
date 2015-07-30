@@ -20,3 +20,9 @@
 .panel.errors ul {
   margin-bottom: 0px;
 }
+
+.section table.table-padded {
+  th, td {
+    padding-left: 8px !important;
+  }
+}
