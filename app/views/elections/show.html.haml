@@ -19,28 +19,26 @@
         %td Owner
         %td= @election.owner.try(:full_name) || 'Unknown'
 
-.row
-  .col-sm-6
+= section_row "Election Administration Logs", 'logs', state: 'always_open'
+.row.section#logs
+  .col-sm-12
     .row.block
-      .col-sm-9
-        %h3 Logs
-      .col-sm-3
+      .col-sm-12.text-right
         = link_to "Upload logs", [ :new, @election, :transaction_log ], class: 'btn btn-default'
 
     = react_component "TransactionLogsTable", data_url: election_transaction_logs_url(@election)
 
-  .col-sm-6
+= section_row "Election Demographic Records", 'demog', state: 'always_open'
+.row.section#demog
+  .col-sm-12
     .row.block
-      .col-sm-9
-        %h3 Voters
-      .col-sm-3
+      .col-sm-12.text-right
         = link_to "Upload voters", [ :new, @election, :demog_file ], class: 'btn btn-default'
 
     = react_component "DemogFilesTable", data_url: election_demog_files_url(@election)
 
-.row
+= section_row "Reports", 'reports', state: 'always_open'
+.row.section#reports
   .col-sm-12
-    %h3 Reports
-
     %p= link_to "Events by County", [ @election, :events_by_county_report ]
     %p= link_to "Events by County by Demog", [ @election, :events_by_county_by_demog_report ]
