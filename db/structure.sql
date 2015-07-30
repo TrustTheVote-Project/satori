@@ -242,7 +242,11 @@ CREATE TABLE demog_files (
     updated_at timestamp without time zone NOT NULL,
     uploaded_at timestamp without time zone,
     uploader_id integer,
-    records_count integer
+    records_count integer,
+    origin character varying NOT NULL,
+    origin_uniq character varying,
+    create_date timestamp without time zone NOT NULL,
+    hash_alg character varying NOT NULL
 );
 
 
@@ -1140,4 +1144,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150730075527');
 INSERT INTO schema_migrations (version) VALUES ('20150730104745');
 
 INSERT INTO schema_migrations (version) VALUES ('20150730105427');
+
+INSERT INTO schema_migrations (version) VALUES ('20150730122713');
 

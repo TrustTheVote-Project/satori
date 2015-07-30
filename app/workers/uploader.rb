@@ -120,10 +120,10 @@ class Uploader
     def parsed_header(header)
       @file = @election.demog_files.build
       @file.filename    = @filename || header.filename
-      # @log.origin      = header.origin
-      # @log.origin_uniq = header.origin_uniq
-      # @log.create_date = header.create_date
-      # @log.hash_alg    = header.hash_alg
+      @file.origin      = header.origin
+      @file.origin_uniq = header.origin_uniq
+      @file.create_date = header.create_date
+      @file.hash_alg    = header.hash_alg
 
       @file.uploader_id = @uploader_id
       @file.uploaded_at = Time.now.utc

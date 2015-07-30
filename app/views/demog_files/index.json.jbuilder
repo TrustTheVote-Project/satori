@@ -4,6 +4,7 @@ json.logs @files do |l|
   json.create_date    l.created_at.strftime("%B %d, %Y %l:%M%p")
   json.uploaded_at    l.uploaded_at.try(:strftime, "%B %d, %Y %l:%M %P")
   json.uploaded_by    l.uploader.try(:full_name)
+  json.origin         l.origin
   json.records_count  l.records_count
   json.url            election_demog_file_url(@election, l)
 end

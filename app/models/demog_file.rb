@@ -7,6 +7,11 @@ class DemogFile < ActiveRecord::Base
 
   before_validation :init_account
 
+  validates :filename, presence: true
+  validates :origin, presence: true
+  validates :hash_alg, presence: true
+  validates :create_date, presence: true
+
   def recalculate_stats!
     self.records_count = self.records.count
     save!
