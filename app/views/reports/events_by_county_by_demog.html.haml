@@ -1,6 +1,6 @@
 .page-header
-  %h2 Events by County by Demographics
-  %p= link_to "Back to Election", @election
+  %h2 Report: Events by County by Demographics
+  %p= link_to "Back to Election: '#{@election.name}'", @election
   %p= link_to "Export to CSV", election_events_by_county_by_demog_report_path(@election, format: 'csv')
 
 .row
