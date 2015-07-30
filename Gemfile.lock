@@ -18,7 +18,7 @@ GIT
 
 GIT
   remote: https://github.com/trustthevote/Tenet-Framework.git
-  revision: 8512fae72fd0e569f177c34b8dd99821080a8798
+  revision: 8beba48792aa93392b2cabc2c6af61b4e0bc9065
   branch: rails-4-2-3
   specs:
     tenet (0.0.1)
@@ -114,7 +114,7 @@ GEM
       nenv
       rspec-logsplit (>= 0.1.2)
       timers (~> 4.0.0)
-    celluloid-essentials (0.20.0)
+    celluloid-essentials (0.20.1.1)
       bundler
       dotenv
       nenv
@@ -167,11 +167,11 @@ GEM
     formatador (0.2.5)
     globalid (0.3.5)
       activesupport (>= 4.1.0)
-    gon (5.2.3)
-      actionpack (>= 2.3.0)
+    gon (6.0.1)
+      actionpack (>= 3.0)
       json
       multi_json
-      request_store (>= 1.0.5)
+      request_store (>= 1.0)
     guard (2.12.8)
       formatador (>= 0.2.4)
       listen (>= 2.7, <= 4.0)
@@ -309,10 +309,10 @@ GEM
       redis-actionpack (~> 4)
       redis-activesupport (~> 4)
       redis-store (~> 1.1.0)
-    redis-store (1.1.5)
+    redis-store (1.1.6)
       redis (>= 2.2)
     ref (2.0.0)
-    request_store (1.1.0)
+    request_store (1.2.0)
     rspec-logsplit (0.1.3)
     ruby_parser (3.7.0)
       sexp_processor (~> 4.1)

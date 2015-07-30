@@ -1,0 +1,14 @@
+en:
+  registration_requests:
+    new:
+      form:
+        organization_name:
+          placeholder: Office of Secretary of State
+        website:
+          placeholder: "http://sos.somestate.gov"
+        admin_first_name:
+          placeholder: Jane
+        admin_title:
+          placeholder: IT Director
+        admin_email:
+          placeholder: "jane@sos.somestate.gov"
