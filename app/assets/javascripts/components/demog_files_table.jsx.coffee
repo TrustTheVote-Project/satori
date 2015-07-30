@@ -77,7 +77,7 @@ ErrorRow = React.createClass
       fileParts = u.url.split('/')
       file = fileParts[fileParts.length - 1]
     `<tr>
-      <td colSpan='2'>
+      <td className='col-sm-12'>
         <p>{file}</p>
         <div className='alert alert-danger'>{u.error}</div>
       </td>
