@@ -4,7 +4,10 @@ class ReportsControllerTest < ActionController::TestCase
 
   include Sorcery::TestHelpers::Rails::Controller
 
-  setup { login_user users(:user) }
+  setup {
+    login_user users(:user)
+    Reports.refresh
+  }
 
   test 'events_by_county' do
     get :events_by_county, election_id: election.id

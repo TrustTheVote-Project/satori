@@ -239,7 +239,10 @@ CREATE TABLE demog_files (
     account_id integer,
     filename character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    uploaded_at timestamp without time zone,
+    uploader_id integer,
+    records_count integer
 );
 
 
@@ -447,7 +450,12 @@ CREATE TABLE transaction_logs (
     records_count integer DEFAULT 0,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    account_id integer
+    account_id integer,
+    uploaded_at timestamp without time zone,
+    uploader_id integer,
+    earliest_event_at timestamp without time zone,
+    latest_event_at timestamp without time zone,
+    events_count integer
 );
 
 
@@ -1128,4 +1136,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150727081034');
 INSERT INTO schema_migrations (version) VALUES ('20150727101036');
 
 INSERT INTO schema_migrations (version) VALUES ('20150730075527');
+
+INSERT INTO schema_migrations (version) VALUES ('20150730104745');
+
+INSERT INTO schema_migrations (version) VALUES ('20150730105427');
 

@@ -17,7 +17,7 @@ class DemogFilesController < BaseController
     job = @election.upload_jobs.build(url: file.path, filename: file.original_filename, kind: UploadJob::DEMOG, state: UploadJob::PENDING)
 
     if job.save
-      Uploader.perform_async(job.id)
+      Uploader.perform_async(job.id, current_user.id)
       redirect_to @election, notice: "Demographics data uploaded and parsing scheduled"
     else
       render :new

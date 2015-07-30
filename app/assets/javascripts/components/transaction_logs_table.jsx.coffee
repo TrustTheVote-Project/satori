@@ -55,22 +55,14 @@ LogsStore = Reflux.createStore
           rows.push `<LogRow key={log.id} log={log}/>`
 
       @state.data.uploads.map (u) ->
-        uploads.push `<UploadRow key={u.id} cols={4} upload={u}/>`
+        uploads.push `<UploadRow key={u.id} cols={2} upload={u}/>`
 
       (@state.data.errors || []).map (e) ->
         errors.push `<ErrorRow key={e.id} error={e}/>`
     else
-      rows.push `<tr><td colSpan='4'>Loading data...</td></tr>`
+      rows.push `<tr><td colSpan='2'>Loading data...</td></tr>`
 
-    `<table className='table'>
-      <thead>
-        <tr>
-          <th className='col-sm-5'>Filename</th>
-          <th className='col-sm-3'>Origin</th>
-          <th className='col-sm-3'>Created on</th>
-          <th className='col-sm-1'></th>
-        </tr>
-      </thead>
+    `<table className='table table-striped'>
       <tbody>
         {rows}
         {uploads}
@@ -83,9 +75,15 @@ LogRow = React.createClass
   render: ->
     l = @props.log
     `<tr>
-      <td>{l.filename}</td>
-      <td>{l.origin}</td>
-      <td>{l.create_date}</td>
+      <td className='col-sm-12'>
+        <PropertyRow label="Uploaded at" value={l.uploaded_at} />
+        <PropertyRow label="Uplaoded by" value={l.uploaded_by} />
+        <PropertyRow label="Origin" value={l.origin} />
+        <PropertyRow label="Filename" value={l.filename} />
+        <PropertyRow label="Earliest Event" value={l.earliest_event_at} />
+        <PropertyRow label="Latest Event" value={l.latest_event_at} />
+        <PropertyRow label="Total Events" value={l.events_count} />
+      </td>
       <td className='text-center'>
         <a href={l.url} data-method='delete' data-confirm='Delete this log?' className='btn btn-xs btn-danger'>
           <div className='glyphicon glyphicon-remove'/>
@@ -102,7 +100,7 @@ ErrorRow = React.createClass
       file = fileParts[fileParts.length - 1]
 
     `<tr>
-      <td colSpan='3'>
+      <td className='col-sm-12'>
         <p>{file}</p>
         <div className='alert alert-danger'>{u.error}</div>
       </td>

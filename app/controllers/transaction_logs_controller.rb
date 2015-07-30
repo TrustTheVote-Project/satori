@@ -17,7 +17,7 @@ class TransactionLogsController < BaseController
     job = @election.upload_jobs.build(url: file.path, filename: file.original_filename, kind: UploadJob::VTL, state: UploadJob::PENDING)
 
     if job.save
-      Uploader.perform_async(job.id)
+      Uploader.perform_async(job.id, current_user.id)
       redirect_to @election, notice: "Log uploaded and parsing scheduled"
     else
       render :new

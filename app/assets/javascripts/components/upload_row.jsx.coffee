@@ -19,7 +19,7 @@
 
     span = @props.cols - 1
     `<tr>
-      <td colSpan={span}>{file}</td>
+      <td colSpan={span} className='col-sm-12'>{file}</td>
       <td className='text-center'>{state}</td>
     </tr>`
 

@@ -2,58 +2,72 @@ class Uploader
 
   include Sidekiq::Worker
 
-  def perform(job_id)
+  def perform(job_id, uploader_id)
     job = UploadJob.find(job_id)
-    send "upload_#{job.kind}", job
+    send "upload_#{job.kind}", job, uploader_id
   end
 
   private
 
-  def upload_vtl(job)
+  def upload_vtl(job, uploader_id)
     return if job.election.nil?
 
-    job.start!
+    handler = VTLParseHandler.new(job.election, job.filename, uploader_id)
+
     TransactionLog.transaction do
-      handler = VTLParseHandler.new(job.election, job.filename)
+      job.start!
+
       if job.url =~ /^http/
         VTL.parse_uri(job.url, handler)
       else
         VTL.parse_file(job.url, handler)
       end
+
       Reports.refresh
       job.finish!
     end
+
+    log = handler.log
+    log.reload
+    log.recalculate_stats!
   rescue => e
-    logger.fatal e.message
-    logger.fatal e.backtrace
     job.abort!(e.message)
+    raise e
   end
 
-  def upload_demog(job)
+  def upload_demog(job, uploader_id)
     return if job.election.nil?
 
-    job.start!
+    handler = DemogParseHandler.new(job.election, job.filename, uploader_id)
+
     DemogFile.transaction do
-      handler = DemogParseHandler.new(job.election, job.filename)
+      job.start!
       if job.url =~ /^http/
         Demog.parse_uri(job.url, handler)
       else
         Demog.parse_file(job.url, handler)
       end
+
       Reports.refresh
       job.finish!
     end
+
+    file = handler.file
+    file.reload
+    file.recalculate_stats!
   rescue => e
-    logger.fatal e.message
-    logger.fatal e.backtrace
     job.abort!(e.message)
+    raise e
   end
 
   # Log parsing handler
   class VTLParseHandler
-    def initialize(election, filename)
+    attr_reader :log
+
+    def initialize(election, filename, uploader_id)
       @election = election
       @filename = filename
+      @uploader_id = uploader_id
     end
 
     def parsed_header(header)
@@ -63,6 +77,10 @@ class Uploader
       @log.origin_uniq = header.origin_uniq
       @log.create_date = header.create_date
       @log.hash_alg    = header.hash_alg
+
+      @log.uploader_id = @uploader_id
+      @log.uploaded_at = Time.now.utc
+
       unless @log.save
         raise "Failed to save log: #{@log.errors.full_messages}"
       end
@@ -91,9 +109,12 @@ class Uploader
 
   # Log parsing handler
   class DemogParseHandler
-    def initialize(election, filename)
+    attr_reader :file
+
+    def initialize(election, filename, uploader_id)
       @election = election
       @filename = filename
+      @uploader_id = uploader_id
     end
 
     def parsed_header(header)
@@ -103,6 +124,10 @@ class Uploader
       # @log.origin_uniq = header.origin_uniq
       # @log.create_date = header.create_date
       # @log.hash_alg    = header.hash_alg
+
+      @file.uploader_id = @uploader_id
+      @file.uploaded_at = Time.now.utc
+
       unless @file.save
         raise "Failed to save file: #{@file.errors.full_messages}"
       end
