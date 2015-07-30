@@ -9,7 +9,7 @@
       %thead
         %th Jurisdiction
         - @report.columns.each do |c|
-          %th= raw c
+          %th= raw c.gsub('- ', '<br/>')
 
       %tbody
         - @report.rows.each do |county, values|

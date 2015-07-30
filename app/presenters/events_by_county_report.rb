@@ -6,7 +6,7 @@ class EventsByCountyReport
 
     Reports::CountsByLocality.where(election_id: election.id).each do |r|
       j   = r.jurisdiction
-      key = r.key.gsub('- ', '<br/>')
+      key = r.key
 
       @columns << key unless @columns.include?(key)
 

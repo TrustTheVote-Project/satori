@@ -6,7 +6,7 @@ class EventsByCountyByDemogReport
 
     Reports::CountsByLocalityByDemog.where(election_id: election.id).each do |r|
       j = r.jurisdiction
-      k = r.key.gsub('- ', '<br/>')
+      k = r.key
       c = r.cnt
 
       if k.nil?
