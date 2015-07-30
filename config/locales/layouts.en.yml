@@ -8,7 +8,7 @@ en:
 
     public:
       header:
-        title: Satori
+        title: "Satori: Election Performance Analytics and Reporting"
         banner_image: tenet/brand.png
         banner_image_alt_text: TrustTheVote Common Services Framework
         banner_text: TrustTheVote Common Services Framework

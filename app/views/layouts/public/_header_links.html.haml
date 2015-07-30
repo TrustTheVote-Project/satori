@@ -1,0 +1,17 @@
+- if logged_in?
+  %ul.nav.navbar-nav.navbar-right
+    - if group_admin?
+      %li= link_to "Users", :group_admin_users
+      %li= link_to "App Management", :group_admin_app_management
+    %li.dropdown
+      = link_to '#', class: 'dropdown-toggle', data: { toggle: 'dropdown' } do
+        %span.glyphicon.glyphicon-user
+        #{current_user.full_name} <span class="caret"></span>
+      %ul.dropdown-menu
+        %li= link_to "Profile", :edit_profile
+        %li= link_to "Logout", :logout
+- else
+  %ul.nav.navbar-nav.navbar-right
+    %li= link_to "Log In", :login
+    %li= link_to "Sign Up", :register
+    %li= link_to "Admin", :admin_admin_dashboard

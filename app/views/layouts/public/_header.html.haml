@@ -1,0 +1,18 @@
+- nav_class = group_admin? ? 'navbar-inverse' : 'navbar-default'
+%nav.navbar{ class: nav_class }
+  .container
+    .navbar-header
+      %button.navbar-toggle.collapse{ type: "button", data: { toggle: "collapse", target: "#navbar" } }
+        %span.sr-only Toggle navigation
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+      = link_to :root, class: "navbar-brand" do
+        %span
+          = image_tag t(".banner_image"), alt: t(".banner_image_alt_text")
+          = t ".title"
+
+    #navbar.collapse.navbar-collapse
+      = render 'layouts/public/header_links'
+
+= render 'layouts/public/after_header' rescue nil
