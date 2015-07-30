@@ -1,48 +1,5 @@
 .page-header
   %h2 Create Election
 
-= form_for @election, html: { class: 'form' } do |f|
-  .form-group
-    .row
-      .col-sm-3
-        = f.label :name, 'Election Name', class: 'control-label'
-        = f.text_field :name, class: 'form-control'
-      .col-sm-3
-        = f.label :held_on, 'Election Date', class: 'control-label'
-        .form-inline
-          = f.date_select :held_on, {}, { class: 'form-control' }
-
-
-  .form-group
-    .row
-      .col-sm-3
-        = f.label :voter_start_on, 'Start Date for Voter Activity', class: 'control-label'
-        .form-inline
-          = f.date_select :voter_start_on, {}, { class: 'form-control' }
-      .col-sm-3
-        = f.label :voter_end_on, 'End Date for Voter Activity', class: 'control-label'
-        .form-inline
-          = f.date_select :voter_end_on, {}, { class: 'form-control' }
-
-  .form-group
-    .row
-      .col-sm-3
-        = f.label :reg_deadline_on, 'Voter Registration Deadline', class: 'control-label'
-        .form-inline
-          = f.date_select :reg_deadline_on, {}, { class: 'form-control' }
-      .col-sm-3
-        = f.label :ab_req_deadline_on, 'Absentee Ballot Request Deadline', class: 'control-label'
-        .form-inline
-          = f.date_select :ab_req_deadline_on, {}, { class: 'form-control' }
-      .col-sm-3
-        = f.label :ab_rec_deadline_on, 'Absentee Ballot Receipt Deadline', class: 'control-label'
-        .form-inline
-          = f.date_select :ab_rec_deadline_on, {}, { class: 'form-control' }
-      .col-sm-3
-        = f.label :ffd_deadline_on, '4f-Day Deadline', class: 'control-label'
-        .form-inline
-          = f.date_select :ffd_deadline_on, {}, { class: 'form-control' }
-
-  .form-group
-    = f.submit "Create Election", class: 'btn btn-primary'
+= render partial: "form", locals: { submit_label: 'Create Election' }
 

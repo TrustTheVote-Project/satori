@@ -19,4 +19,22 @@ module ApplicationHelper
     content_tag(:div, content.join.html_safe, class: 'row section-row')
   end
 
+  # renders the error block for a given object with the custom head message
+  def form_errors_panel(objects, message, options = {})
+    errors = []
+    if objects.present?
+      [ objects ].flatten.compact.each { |o| errors += o.errors.full_messages }
+    end
+    hidden_class = errors.any? ? nil : 'hidden'
+
+    content_tag(:div, [
+      content_tag(:div, [
+        content_tag(:h4, message, class: 'panel-title')
+      ].join.html_safe, class: 'panel-heading'),
+      content_tag(:div, [
+        content_tag(:ul, errors.map { |m| content_tag(:li, m) }.join.html_safe)
+      ].join.html_safe, class: 'panel-body')
+    ].join.html_safe, class: [ 'panel panel-danger errors', hidden_class, options[:class] ].compact.join(' '))
+  end
+
 end

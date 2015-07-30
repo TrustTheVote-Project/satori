@@ -28,6 +28,22 @@ class ElectionsController < BaseController
     end
   end
 
+  # election edit form
+  def edit
+    @election = election
+  end
+
+  # updates the election
+  def update
+    @election = election
+    if @election.update_attributes(elec_params)
+      redirect_to election, notice: "Election updated"
+    else
+      render :edit
+    end
+  end
+
+  # deletes election
   def destroy
     election.destroy
     redirect_to :dashboard, notice: "Election deleted"
