@@ -87,10 +87,10 @@ CREATE TABLE transaction_records (
 
 
 --
--- Name: counts_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+-- Name: counts_by_county; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE MATERIALIZED VIEW counts_by_locality AS
+CREATE MATERIALIZED VIEW counts_by_county AS
  SELECT transaction_records.election_id,
     transaction_records.jurisdiction,
     1 AS section,
@@ -141,10 +141,10 @@ CREATE TABLE demog_records (
 
 
 --
--- Name: counts_by_locality_by_demog; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+-- Name: counts_by_county_by_demog; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE MATERIALIZED VIEW counts_by_locality_by_demog AS
+CREATE MATERIALIZED VIEW counts_by_county_by_demog AS
  WITH records AS (
          SELECT t.election_id,
             t.jurisdiction,
@@ -1146,4 +1146,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150730104745');
 INSERT INTO schema_migrations (version) VALUES ('20150730105427');
 
 INSERT INTO schema_migrations (version) VALUES ('20150730122713');
+
+INSERT INTO schema_migrations (version) VALUES ('20150803135637');
 
