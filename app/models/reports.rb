@@ -6,6 +6,7 @@ class Reports
       REFRESH MATERIALIZED VIEW events_by_county_by_demog;
       REFRESH MATERIALIZED VIEW events_by_county;
       REFRESH MATERIALIZED VIEW events_by_locality_by_uocava;
+      REFRESH MATERIALIZED VIEW events_by_locality_by_gender;
     SQL
   end
 

@@ -1,7 +1,7 @@
 .page-header
-  %h2 Report: Events by Locality by Demographics: UOCAVA
+  %h2 Report: Events by Locality by Demographics: Gender
   %p= link_to "Back to Election: '#{@election.name}'", @election
-  %p= link_to "Export to CSV", election_events_by_locality_by_uocava_report_path(@election, format: 'csv')
+  %p= link_to "Export to CSV", election_events_by_locality_by_gender_report_path(@election, format: 'csv')
 
 .row
   .col-sm-12

@@ -344,80 +344,6 @@ CREATE MATERIALIZED VIEW events_by_locality AS
 
 
 --
--- Name: events_by_locality_by_demog; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE MATERIALIZED VIEW events_by_locality_by_demog AS
- WITH records AS (
-         SELECT t.election_id,
-            t.jurisdiction,
-            t.action,
-            t.form,
-            COALESCE(d.gender, 'No gender'::character varying) AS gender,
-            ((d.overseas = true) OR (d.military = true)) AS uocava
-           FROM (transaction_records t
-             LEFT JOIN demog_records d ON (((t.voter_id)::text = (d.voter_id)::text)))
-          WHERE (t.election_id = d.election_id)
-        ), voters AS (
-         SELECT demog_records.election_id,
-            demog_records.jurisdiction,
-            demog_records.voter_id,
-            ((demog_records.overseas = true) OR (demog_records.military = true)) AS uocava
-           FROM demog_records
-        )
- SELECT voters.election_id,
-    voters.jurisdiction,
-    'Registered Voters'::text AS key,
-    count(*) AS total,
-    count(*) FILTER (WHERE (voters.uocava = true)) AS uocava,
-    count(*) FILTER (WHERE (voters.uocava = false)) AS local
-   FROM voters
-  GROUP BY voters.election_id, voters.jurisdiction
-UNION ALL
- SELECT records.election_id,
-    records.jurisdiction,
-    concat(records.action, (' - '::text || (records.form)::text)) AS key,
-    count(*) AS total,
-    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
-    count(*) FILTER (WHERE (records.uocava = false)) AS local
-   FROM records
-  WHERE (((records.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND (records.form IS NOT NULL))
-  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || (records.form)::text))
-UNION ALL
- SELECT records.election_id,
-    records.jurisdiction,
-    records.action AS key,
-    count(*) AS total,
-    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
-    count(*) FILTER (WHERE (records.uocava = false)) AS local
-   FROM records
-  WHERE ((records.action)::text = ANY ((ARRAY['cancelVoterRecord'::character varying, 'voterPollCheckin'::character varying])::text[]))
-  GROUP BY records.election_id, records.jurisdiction, records.action
-UNION ALL
- SELECT records.election_id,
-    records.jurisdiction,
-    records.action AS key,
-    count(*) AS total,
-    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
-    count(*) FILTER (WHERE (records.uocava = false)) AS local
-   FROM records
-  WHERE (((records.action)::text = 'sentToVoter'::text) AND ((records.form)::text = ANY ((ARRAY['VoterCard'::character varying, 'AbsenteeBallot'::character varying])::text[])))
-  GROUP BY records.election_id, records.jurisdiction, records.action
-UNION ALL
- SELECT records.election_id,
-    records.jurisdiction,
-    records.action AS key,
-    count(*) AS total,
-    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
-    count(*) FILTER (WHERE (records.uocava = false)) AS local
-   FROM records
-  WHERE (((records.form)::text = 'AbsenteeBallot'::text) AND ((records.action)::text = ANY ((ARRAY['receive'::character varying, 'returnedUndelivered'::character varying])::text[])))
-  GROUP BY records.election_id, records.jurisdiction, records.action
-  ORDER BY 2, 3
-  WITH NO DATA;
-
-
---
 -- Name: events_by_locality_by_demog_views; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -443,6 +369,78 @@ CREATE SEQUENCE events_by_locality_by_demog_views_id_seq
 --
 
 ALTER SEQUENCE events_by_locality_by_demog_views_id_seq OWNED BY events_by_locality_by_demog_views.id;
+
+
+--
+-- Name: events_by_locality_by_gender; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW events_by_locality_by_gender AS
+ WITH records AS (
+         SELECT t.election_id,
+            t.jurisdiction,
+            t.action,
+            t.form,
+            d.gender
+           FROM (transaction_records t
+             LEFT JOIN demog_records d ON (((t.voter_id)::text = (d.voter_id)::text)))
+          WHERE (t.election_id = d.election_id)
+        ), voters AS (
+         SELECT demog_records.election_id,
+            demog_records.jurisdiction,
+            demog_records.gender
+           FROM demog_records
+        )
+ SELECT voters.election_id,
+    voters.jurisdiction,
+    'Registered Voters'::text AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE ((voters.gender)::text = 'Male'::text)) AS male,
+    count(*) FILTER (WHERE ((voters.gender)::text = 'Female'::text)) AS female
+   FROM voters
+  GROUP BY voters.election_id, voters.jurisdiction
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    concat(records.action, (' - '::text || (records.form)::text)) AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE ((records.gender)::text = 'Male'::text)) AS male,
+    count(*) FILTER (WHERE ((records.gender)::text = 'Female'::text)) AS female
+   FROM records
+  WHERE (((records.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND (records.form IS NOT NULL))
+  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || (records.form)::text))
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    records.action AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE ((records.gender)::text = 'Male'::text)) AS male,
+    count(*) FILTER (WHERE ((records.gender)::text = 'Female'::text)) AS female
+   FROM records
+  WHERE ((records.action)::text = ANY ((ARRAY['cancelVoterRecord'::character varying, 'voterPollCheckin'::character varying])::text[]))
+  GROUP BY records.election_id, records.jurisdiction, records.action
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    records.action AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE ((records.gender)::text = 'Male'::text)) AS male,
+    count(*) FILTER (WHERE ((records.gender)::text = 'Female'::text)) AS female
+   FROM records
+  WHERE (((records.action)::text = 'sentToVoter'::text) AND ((records.form)::text = ANY ((ARRAY['VoterCard'::character varying, 'AbsenteeBallot'::character varying])::text[])))
+  GROUP BY records.election_id, records.jurisdiction, records.action
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    records.action AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE ((records.gender)::text = 'Male'::text)) AS male,
+    count(*) FILTER (WHERE ((records.gender)::text = 'Female'::text)) AS female
+   FROM records
+  WHERE (((records.form)::text = 'AbsenteeBallot'::text) AND ((records.action)::text = ANY ((ARRAY['receive'::character varying, 'returnedUndelivered'::character varying])::text[])))
+  GROUP BY records.election_id, records.jurisdiction, records.action
+  ORDER BY 2, 3
+  WITH NO DATA;
 
 
 --
@@ -1359,4 +1357,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150803140719');
 INSERT INTO schema_migrations (version) VALUES ('20150804103137');
 
 INSERT INTO schema_migrations (version) VALUES ('20150804103656');
+
+INSERT INTO schema_migrations (version) VALUES ('20150804123823');
 
