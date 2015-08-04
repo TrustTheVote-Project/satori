@@ -28,5 +28,5 @@
 }
 
 table#report {
-  width: 800px;
+  th, td { white-space: nowrap; }
 }

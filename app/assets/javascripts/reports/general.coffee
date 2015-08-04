@@ -1,5 +1,5 @@
 $ ->
-  dt = $('ttable.dataTable').dataTable
+  dt = $('table.dataTable').dataTable
     paging:  false
     scrollY: 800
     scrollX: true
