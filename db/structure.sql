@@ -251,9 +251,8 @@ CREATE MATERIALIZED VIEW events_by_county_by_demog AS
             t.form,
             COALESCE(d.gender, 'No gender'::character varying) AS gender,
                 CASE
-                    WHEN (d.overseas = false) THEN 'Local'::text
-                    WHEN (d.overseas = true) THEN 'UOCAVA'::text
-                    ELSE 'No overseas'::text
+                    WHEN ((d.overseas = true) OR (d.military = true)) THEN 'UOCAVA'::text
+                    ELSE 'Local'::text
                 END AS overseas
            FROM (transaction_records t
              LEFT JOIN demog_records d ON (((t.voter_id)::text = (d.voter_id)::text)))
@@ -341,6 +340,181 @@ CREATE MATERIALIZED VIEW events_by_locality AS
    FROM transaction_records
   GROUP BY transaction_records.election_id, transaction_records.jurisdiction, concat(transaction_records.action, ' - ', transaction_records.form)
   ORDER BY 1::integer, transaction_records.jurisdiction, concat(transaction_records.action, ' - ', transaction_records.form)
+  WITH NO DATA;
+
+
+--
+-- Name: events_by_locality_by_demog; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW events_by_locality_by_demog AS
+ WITH records AS (
+         SELECT t.election_id,
+            t.jurisdiction,
+            t.action,
+            t.form,
+            COALESCE(d.gender, 'No gender'::character varying) AS gender,
+            ((d.overseas = true) OR (d.military = true)) AS uocava
+           FROM (transaction_records t
+             LEFT JOIN demog_records d ON (((t.voter_id)::text = (d.voter_id)::text)))
+          WHERE (t.election_id = d.election_id)
+        ), voters AS (
+         SELECT demog_records.election_id,
+            demog_records.jurisdiction,
+            demog_records.voter_id,
+            ((demog_records.overseas = true) OR (demog_records.military = true)) AS uocava
+           FROM demog_records
+        )
+ SELECT voters.election_id,
+    voters.jurisdiction,
+    'Registered Voters'::text AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE (voters.uocava = true)) AS uocava,
+    count(*) FILTER (WHERE (voters.uocava = false)) AS local
+   FROM voters
+  GROUP BY voters.election_id, voters.jurisdiction
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    concat(records.action, (' - '::text || (records.form)::text)) AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
+    count(*) FILTER (WHERE (records.uocava = false)) AS local
+   FROM records
+  WHERE (((records.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND (records.form IS NOT NULL))
+  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || (records.form)::text))
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    records.action AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
+    count(*) FILTER (WHERE (records.uocava = false)) AS local
+   FROM records
+  WHERE ((records.action)::text = ANY ((ARRAY['cancelVoterRecord'::character varying, 'voterPollCheckin'::character varying])::text[]))
+  GROUP BY records.election_id, records.jurisdiction, records.action
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    records.action AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
+    count(*) FILTER (WHERE (records.uocava = false)) AS local
+   FROM records
+  WHERE (((records.action)::text = 'sentToVoter'::text) AND ((records.form)::text = ANY ((ARRAY['VoterCard'::character varying, 'AbsenteeBallot'::character varying])::text[])))
+  GROUP BY records.election_id, records.jurisdiction, records.action
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    records.action AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
+    count(*) FILTER (WHERE (records.uocava = false)) AS local
+   FROM records
+  WHERE (((records.form)::text = 'AbsenteeBallot'::text) AND ((records.action)::text = ANY ((ARRAY['receive'::character varying, 'returnedUndelivered'::character varying])::text[])))
+  GROUP BY records.election_id, records.jurisdiction, records.action
+  ORDER BY 2, 3
+  WITH NO DATA;
+
+
+--
+-- Name: events_by_locality_by_demog_views; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE events_by_locality_by_demog_views (
+    id integer NOT NULL
+);
+
+
+--
+-- Name: events_by_locality_by_demog_views_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE events_by_locality_by_demog_views_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: events_by_locality_by_demog_views_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE events_by_locality_by_demog_views_id_seq OWNED BY events_by_locality_by_demog_views.id;
+
+
+--
+-- Name: events_by_locality_by_uocava; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW events_by_locality_by_uocava AS
+ WITH records AS (
+         SELECT t.election_id,
+            t.jurisdiction,
+            t.action,
+            t.form,
+            ((d.overseas = true) OR (d.military = true)) AS uocava
+           FROM (transaction_records t
+             LEFT JOIN demog_records d ON (((t.voter_id)::text = (d.voter_id)::text)))
+          WHERE (t.election_id = d.election_id)
+        ), voters AS (
+         SELECT demog_records.election_id,
+            demog_records.jurisdiction,
+            demog_records.voter_id,
+            ((demog_records.overseas = true) OR (demog_records.military = true)) AS uocava
+           FROM demog_records
+        )
+ SELECT voters.election_id,
+    voters.jurisdiction,
+    'Registered Voters'::text AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE (voters.uocava = true)) AS uocava,
+    count(*) FILTER (WHERE (voters.uocava = false)) AS local
+   FROM voters
+  GROUP BY voters.election_id, voters.jurisdiction
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    concat(records.action, (' - '::text || (records.form)::text)) AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
+    count(*) FILTER (WHERE (records.uocava = false)) AS local
+   FROM records
+  WHERE (((records.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND (records.form IS NOT NULL))
+  GROUP BY records.election_id, records.jurisdiction, concat(records.action, (' - '::text || (records.form)::text))
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    records.action AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
+    count(*) FILTER (WHERE (records.uocava = false)) AS local
+   FROM records
+  WHERE ((records.action)::text = ANY ((ARRAY['cancelVoterRecord'::character varying, 'voterPollCheckin'::character varying])::text[]))
+  GROUP BY records.election_id, records.jurisdiction, records.action
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    records.action AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
+    count(*) FILTER (WHERE (records.uocava = false)) AS local
+   FROM records
+  WHERE (((records.action)::text = 'sentToVoter'::text) AND ((records.form)::text = ANY ((ARRAY['VoterCard'::character varying, 'AbsenteeBallot'::character varying])::text[])))
+  GROUP BY records.election_id, records.jurisdiction, records.action
+UNION ALL
+ SELECT records.election_id,
+    records.jurisdiction,
+    records.action AS key,
+    count(*) AS total,
+    count(*) FILTER (WHERE (records.uocava = true)) AS uocava,
+    count(*) FILTER (WHERE (records.uocava = false)) AS local
+   FROM records
+  WHERE (((records.form)::text = 'AbsenteeBallot'::text) AND ((records.action)::text = ANY ((ARRAY['receive'::character varying, 'returnedUndelivered'::character varying])::text[])))
+  GROUP BY records.election_id, records.jurisdiction, records.action
+  ORDER BY 2, 3
   WITH NO DATA;
 
 
@@ -640,6 +814,13 @@ ALTER TABLE ONLY elections ALTER COLUMN id SET DEFAULT nextval('elections_id_seq
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY events_by_locality_by_demog_views ALTER COLUMN id SET DEFAULT nextval('events_by_locality_by_demog_views_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY registration_requests ALTER COLUMN id SET DEFAULT nextval('registration_requests_id_seq'::regclass);
 
 
@@ -715,6 +896,14 @@ ALTER TABLE ONLY demog_records
 
 ALTER TABLE ONLY elections
     ADD CONSTRAINT elections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: events_by_locality_by_demog_views_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY events_by_locality_by_demog_views
+    ADD CONSTRAINT events_by_locality_by_demog_views_pkey PRIMARY KEY (id);
 
 
 --
@@ -1166,4 +1355,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150730122713');
 INSERT INTO schema_migrations (version) VALUES ('20150803135637');
 
 INSERT INTO schema_migrations (version) VALUES ('20150803140719');
+
+INSERT INTO schema_migrations (version) VALUES ('20150804103137');
+
+INSERT INTO schema_migrations (version) VALUES ('20150804103656');
 
