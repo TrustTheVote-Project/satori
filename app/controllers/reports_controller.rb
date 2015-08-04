@@ -7,26 +7,17 @@ class ReportsController < BaseController
 
   def events_by_county
     @report = EventsByCountyReport.new(@election)
-
-    respond_to do |format|
-      format.html
-      format.csv do
-        csv = jurisdiction_report_csv(@report)
-        send_csv csv, "events_by_county.csv"
-      end
-    end
+    html_or_csv_response
   end
 
   def events_by_county_by_demog
     @report = EventsByCountyByDemogReport.new(@election)
+    html_or_csv_response
+  end
 
-    respond_to do |format|
-      format.html
-      format.csv do
-        csv = jurisdiction_report_csv(@report)
-        send_csv csv, "events_by_county_by_demographics.csv"
-      end
-    end
+  def events_by_locality
+    @report = EventsByLocalityReport.new(@election)
+    html_or_csv_response
   end
 
   private
@@ -39,8 +30,23 @@ class ReportsController < BaseController
     return CSV.generate do |c|
       c << [ "Jurisdiction" ] + report.columns
 
+      if report.respond_to?(:totals_row)
+        totals = report.totals_row
+        c << [ "Totals" ] + report.columns.map { |co| totals[co] }
+      end
+
       report.rows.each do |county, values|
         c << [ county ] + report.columns.map { |co| values[co] }
+      end
+    end
+  end
+
+  def html_or_csv_response
+    respond_to do |format|
+      format.html
+      format.csv do
+        csv = jurisdiction_report_csv(@report)
+        send_csv csv, "#{params[:action]}.csv"
       end
     end
   end

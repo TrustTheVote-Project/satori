@@ -1,0 +1,29 @@
+.page-header
+  %h2 Report: Events by Locality
+  %p= link_to "Back to Election: '#{@election.name}'", @election
+  %p= link_to "Export to CSV", election_events_by_locality_report_path(@election, format: 'csv')
+
+.row
+  .col-sm-12
+    %p #{@election.voter_start_on.strftime("%d %B %Y")} to #{@election.voter_end_on.strftime("%d %B %Y")} in #{current_user.account.state.name}
+    %table#report.stripe.row-border.dataTable
+      %thead
+        %tr
+          %th Jurisdiction
+          - @report.columns.each do |c|
+            %th= raw c.gsub('- ', '<br/>')
+        %tr
+          %th Total
+          - @report.columns.each do |c|
+            %th.text-center= @report.totals_row[c]
+
+      %tbody
+
+        - @report.rows.each do |county, values|
+          %tr
+            %td= county
+            - @report.columns.each do |c|
+              %td.text-center= values[c]
+
+= content_for :scripts do
+  = javascript_include_tag "reports"

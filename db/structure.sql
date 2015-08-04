@@ -64,52 +64,43 @@ ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
 
 
 --
--- Name: transaction_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: demog_files; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE transaction_records (
+CREATE TABLE demog_files (
     id integer NOT NULL,
-    log_id integer,
-    voter_id character varying NOT NULL,
-    recorded_at timestamp without time zone NOT NULL,
-    action character varying NOT NULL,
-    jurisdiction character varying NOT NULL,
-    form character varying,
-    form_note character varying,
-    leo character varying,
-    notes character varying,
-    comment character varying,
+    election_id integer,
+    account_id integer,
+    filename character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    election_id integer,
-    account_id integer
+    uploaded_at timestamp without time zone,
+    uploader_id integer,
+    records_count integer,
+    origin character varying NOT NULL,
+    origin_uniq character varying,
+    create_date timestamp without time zone NOT NULL,
+    hash_alg character varying NOT NULL
 );
 
 
 --
--- Name: counts_by_county; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+-- Name: demog_files_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE MATERIALIZED VIEW counts_by_county AS
- SELECT transaction_records.election_id,
-    transaction_records.jurisdiction,
-    1 AS section,
-    concat(transaction_records.action, ' - ', transaction_records.form) AS key,
-    count(*) AS cnt
-   FROM transaction_records
-  WHERE (transaction_records.form IS NOT NULL)
-  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, concat(transaction_records.action, ' - ', transaction_records.form)
-UNION ALL
- SELECT transaction_records.election_id,
-    transaction_records.jurisdiction,
-    2 AS section,
-    'Other'::text AS key,
-    count(*) AS cnt
-   FROM transaction_records
-  WHERE (transaction_records.form IS NULL)
-  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, 'Other'::text
-  ORDER BY 3, 2, 4
-  WITH NO DATA;
+CREATE SEQUENCE demog_files_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: demog_files_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE demog_files_id_seq OWNED BY demog_files.id;
 
 
 --
@@ -141,10 +132,118 @@ CREATE TABLE demog_records (
 
 
 --
--- Name: counts_by_county_by_demog; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+-- Name: demog_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE MATERIALIZED VIEW counts_by_county_by_demog AS
+CREATE SEQUENCE demog_records_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: demog_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE demog_records_id_seq OWNED BY demog_records.id;
+
+
+--
+-- Name: elections; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE elections (
+    id integer NOT NULL,
+    name character varying,
+    held_on date,
+    voter_start_on date,
+    voter_end_on date,
+    reg_deadline_on date,
+    ab_req_deadline_on date,
+    ab_rec_deadline_on date,
+    ffd_deadline_on date,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    account_id integer,
+    owner_id integer
+);
+
+
+--
+-- Name: elections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE elections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: elections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE elections_id_seq OWNED BY elections.id;
+
+
+--
+-- Name: transaction_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE transaction_records (
+    id integer NOT NULL,
+    log_id integer,
+    voter_id character varying NOT NULL,
+    recorded_at timestamp without time zone NOT NULL,
+    action character varying NOT NULL,
+    jurisdiction character varying NOT NULL,
+    form character varying,
+    form_note character varying,
+    leo character varying,
+    notes character varying,
+    comment character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    election_id integer,
+    account_id integer
+);
+
+
+--
+-- Name: events_by_county; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW events_by_county AS
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    1 AS section,
+    concat(transaction_records.action, ' - ', transaction_records.form) AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE (transaction_records.form IS NOT NULL)
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, concat(transaction_records.action, ' - ', transaction_records.form)
+UNION ALL
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    2 AS section,
+    'Other'::text AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE (transaction_records.form IS NULL)
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, 'Other'::text
+  ORDER BY 3, 2, 4
+  WITH NO DATA;
+
+
+--
+-- Name: events_by_county_by_demog; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW events_by_county_by_demog AS
  WITH records AS (
          SELECT t.election_id,
             t.jurisdiction,
@@ -230,102 +329,19 @@ UNION ALL
 
 
 --
--- Name: demog_files; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: events_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE demog_files (
-    id integer NOT NULL,
-    election_id integer,
-    account_id integer,
-    filename character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    uploaded_at timestamp without time zone,
-    uploader_id integer,
-    records_count integer,
-    origin character varying NOT NULL,
-    origin_uniq character varying,
-    create_date timestamp without time zone NOT NULL,
-    hash_alg character varying NOT NULL
-);
-
-
---
--- Name: demog_files_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE demog_files_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: demog_files_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE demog_files_id_seq OWNED BY demog_files.id;
-
-
---
--- Name: demog_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE demog_records_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: demog_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE demog_records_id_seq OWNED BY demog_records.id;
-
-
---
--- Name: elections; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE elections (
-    id integer NOT NULL,
-    name character varying,
-    held_on date,
-    voter_start_on date,
-    voter_end_on date,
-    reg_deadline_on date,
-    ab_req_deadline_on date,
-    ab_rec_deadline_on date,
-    ffd_deadline_on date,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    account_id integer,
-    owner_id integer
-);
-
-
---
--- Name: elections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE elections_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: elections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE elections_id_seq OWNED BY elections.id;
+CREATE MATERIALIZED VIEW events_by_locality AS
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    1 AS section,
+    concat(transaction_records.action, ' - ', transaction_records.form) AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, concat(transaction_records.action, ' - ', transaction_records.form)
+  ORDER BY 1::integer, transaction_records.jurisdiction, concat(transaction_records.action, ' - ', transaction_records.form)
+  WITH NO DATA;
 
 
 --
@@ -1148,4 +1164,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150730105427');
 INSERT INTO schema_migrations (version) VALUES ('20150730122713');
 
 INSERT INTO schema_migrations (version) VALUES ('20150803135637');
+
+INSERT INTO schema_migrations (version) VALUES ('20150803140719');
 

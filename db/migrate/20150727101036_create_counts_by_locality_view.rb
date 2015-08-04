@@ -1,7 +1,7 @@
-class CreateCountsByLocalityView < ActiveRecord::Migration
+class CreateEventsByLocalityOldView < ActiveRecord::Migration
   def up
     self.connection.execute %Q{
-      CREATE MATERIALIZED VIEW counts_by_locality AS
+      CREATE MATERIALIZED VIEW events_by_locality AS
         SELECT election_id, jurisdiction, 1 section, CONCAT(action, ' - ', form) AS key, COUNT(*) AS cnt
         FROM transaction_records
         WHERE form IS NOT NULL

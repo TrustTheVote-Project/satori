@@ -4,7 +4,7 @@ class EventsByCountyByDemogReport
     @columns = []
     @counties = {}
 
-    Reports::CountsByCountyByDemog.where(election_id: election.id).each do |r|
+    Reports::EventsByCountyByDemog.where(election_id: election.id).each do |r|
       j = r.jurisdiction
       k = r.key
       c = r.cnt
