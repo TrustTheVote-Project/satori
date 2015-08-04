@@ -1,7 +1,7 @@
 $ ->
-  dt = $('table.dataTable').dataTable
+  dt = $('ttable.dataTable').dataTable
     paging:  false
-    scrollY: 400
+    scrollY: 800
     scrollX: true
     info:    false
     searching:  false
