@@ -1,4 +1,4 @@
-class RecreateEventsByCountyByUocavaView < ActiveRecord::Migration
+class RecreateEventsByCountyByDemogView < ActiveRecord::Migration
   def up
     self.connection.execute %Q{
       DROP MATERIALIZED VIEW IF EXISTS events_by_county_by_demog;
