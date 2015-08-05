@@ -21,12 +21,7 @@
 
     %p= link_to "Edit", [ :edit, @election ], class: 'btn btn-info'
 
-= section_row "Election Data", 'logs', state: 'always_open'
-.row.section#logs
-  .col-sm-12
-    = react_component "ElectionDataTable"
-    -# = react_component "TransactionLogsTable", data_url: election_transaction_logs_url(@election)
-    -# = react_component "DemogFilesTable", data_url: election_demog_files_url(@election)
+= react_component "ElectionDataSection"
 
 = section_row "Reports", 'reports', state: 'always_open'
 .row.section#reports

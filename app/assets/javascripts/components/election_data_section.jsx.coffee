@@ -35,20 +35,61 @@ DataStore = Reflux.createStore
     ), 'json'
 
 
-@ElectionDataTable = React.createClass
+@ElectionDataSection = React.createClass
   mixins: [
     Reflux.connect DataStore, "data"
   ]
 
+  getInitialState: ->
+    { collapse: true }
+
+  onToggle: (e) ->
+    e.preventDefault()
+    @setState { collapse: !@state.collapse }
+
+  render: ->
+    sectionClass = [ 'row', 'section', if @state.collapse then 'collapse' else null ].join(' ')
+    buttonLabel  = if @state.collapse then 'Show' else 'Hide'
+    
+    data    = @state.data
+    noDemog = !data.has_demog
+    noVTL   = !data.has_vtl
+
+    if noDemog and noVTL
+      status = 'none'
+    else if noDemog or noVTL
+      status = 'partial'
+    else if data.locked
+      status = 'complete'
+    else
+      status = 'available'
+
+    `<div>
+      <div className='row section-row'>
+        <div className='col-xs-10'>
+          <h4>Election Data ({status})</h4>
+        </div>
+        <div className='col-xs-2 text-right'>
+          <button className='btn btn-xs btn-default' type='button' onClick={this.onToggle}>{buttonLabel}</button>
+        </div>
+      </div>
+      <div className={sectionClass}>
+        <div className='col-xs-12'>
+          <ElectionDataTable data={this.state.data} />
+        </div>
+      </div>
+    </div>`
+
+ElectionDataTable = React.createClass
   componentDidMount: ->
     actLoadData()
     setInterval ( () => actLoadData() ), 5000
 
   render: ->
     `<div>
-      <StatusLine data={this.state.data}/>
-      <Buttons data={this.state.data}/>
-      <Table data={this.state.data}/>
+      <StatusLine data={this.props.data}/>
+      <Buttons data={this.props.data}/>
+      <Table data={this.props.data}/>
     </div>`
 
 
@@ -73,11 +114,12 @@ StatusLine = React.createClass
 
 Buttons = React.createClass
   render: ->
-    data    = @props.data
+    data = @props.data
 
     if data.locked
       actions = [
-        `<a onClick={actUnlockData} data-confirm='Are you sure to unlock?' className='btn btn-default'>Unlock Data</a>`
+        `<span>&nbsp;</span>` # without this span React reloads whole page on link click #ODD
+        `<a onClick={actUnlockData} data-cconfirm='Are you sure to unlock?' className='btn btn-default'>Unlock Data</a>`
       ]
     else
       noDemog = !data.has_demog
@@ -88,7 +130,7 @@ Buttons = React.createClass
         `<span>&nbsp;</span>`
         `<a href={gon.new_demog_file_url} className='btn btn-default'>Upload Voter Demographic Data</a>`
         `<span>&nbsp;</span>`
-        `<a onClick={actLockData} disabled={lockDisabled} data-confirm='Are you sure to lock?' className='btn btn-default'>Lock Data</a>`
+        `<a onClick={actLockData} disabled={lockDisabled} data-cconfirm='Are you sure to lock?' className='btn btn-default'>Lock Data</a>`
       ]
 
     `<p className='text-right'>
