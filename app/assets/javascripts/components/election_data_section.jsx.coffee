@@ -67,7 +67,7 @@ DataStore = Reflux.createStore
     `<div>
       <div className='row section-row'>
         <div className='col-xs-10'>
-          <h4>Election Data ({status})</h4>
+          <h4>Election Data (<em className='smaller'>{status}</em>)</h4>
         </div>
         <div className='col-xs-2 text-right'>
           <button className='btn btn-xs btn-default' type='button' onClick={this.onToggle}>{buttonLabel}</button>
