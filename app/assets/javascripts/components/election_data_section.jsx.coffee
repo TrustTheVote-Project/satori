@@ -117,25 +117,22 @@ Buttons = React.createClass
     data = @props.data
 
     if data.locked
-      actions = [
-        `<span>&nbsp;</span>` # without this span React reloads whole page on link click #ODD
-        `<a onClick={actUnlockData} data-cconfirm='Are you sure to unlock?' className='btn btn-default'>Unlock Data</a>`
-      ]
+      `<p className='text-right'>
+        <span>&nbsp;</span>
+        <a onClick={actUnlockData} data-confirm='Are you sure to unlock?' className='btn btn-default'>Unlock Data</a>
+      </p>`
     else
       noDemog = !data.has_demog
       noVTL   = !data.has_vtl
       lockDisabled = noDemog || noVTL
-      actions = [
-        `<a href={gon.new_vtl_url} className='btn btn-default'>Upload Voter Administration Log Data</a>`,
-        `<span>&nbsp;</span>`
-        `<a href={gon.new_demog_file_url} className='btn btn-default'>Upload Voter Demographic Data</a>`
-        `<span>&nbsp;</span>`
-        `<a onClick={actLockData} disabled={lockDisabled} data-cconfirm='Are you sure to lock?' className='btn btn-default'>Lock Data</a>`
-      ]
+      `<p className='text-right'>
+        <a href={gon.new_vtl_url} className='btn btn-default'>Upload Voter Administration Log Data</a>
+        <span>&nbsp;</span>
+        <a href={gon.new_demog_file_url} className='btn btn-default'>Upload Voter Demographic Data</a>
+        <span>&nbsp;</span>
+        <a onClick={actLockData} disabled={lockDisabled} data-confirm='Are you sure to lock?' className='btn btn-default'>Lock Data</a>
+      </p>`
 
-    `<p className='text-right'>
-      {actions}
-    </p>`
 
 
 Table = React.createClass
@@ -167,14 +164,14 @@ Row = React.createClass
     if l.type == 'vtl'
       dataType = 'Voter Administration'
       customRows = [
-        `<PropertyRow label="Earliest Event" value={l.earliest_event_at} />`
-        `<PropertyRow label="Latest Event" value={l.latest_event_at} />`
-        `<PropertyRow label="Total Events" value={l.events_count} />`
+        `<PropertyRow key='ee' label="Earliest Event" value={l.earliest_event_at} />`
+        `<PropertyRow key='le' label="Latest Event" value={l.latest_event_at} />`
+        `<PropertyRow key='te' label="Total Events" value={l.events_count} />`
       ]
     else
       dataType = 'Voter Demographics'
       customRows = [
-        `<PropertyRow label="Total Records" value={l.records_count} />`
+        `<PropertyRow key='tr' label="Total Records" value={l.records_count} />`
       ]
 
     `<tr>
