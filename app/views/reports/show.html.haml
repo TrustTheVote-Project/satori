@@ -13,13 +13,15 @@
           - @report.columns.each do |c|
             - a, f = c.split(' - ')
             - a = a.split(/(?=[A-Z][a-z])/).join('<br/>')
-            - f = f.split(/(?=[A-Z][a-z])/).join('<br/>')
-            - h = "#{a}<br/><br/>#{f}"
+            - f = f && f.split(/(?=[A-Z][a-z])/).join('<br/>')
+            - h = [ a, f ].reject(&:blank?).join("<br/><br/>")
             %th= raw h
-        %tr
-          %th Total
-          - @report.columns.each do |c|
-            %th.text-center= @report.totals_row[c]
+
+        - if @report.respond_to? :totals_row
+          %tr
+            %th Total
+            - @report.columns.each do |c|
+              %th.text-center= @report.totals_row[c]
 
       %tbody
 

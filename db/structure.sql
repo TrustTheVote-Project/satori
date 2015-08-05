@@ -668,6 +668,32 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
+-- Name: voter_demographics_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW voter_demographics_by_locality AS
+ SELECT demog_records.election_id,
+    demog_records.jurisdiction,
+    count(*) AS total,
+    count(*) FILTER (WHERE ((demog_records.reg_status)::text = 'Active'::text)) AS active,
+    count(*) FILTER (WHERE ((demog_records.reg_status)::text = 'Inactive'::text)) AS inactive,
+    count(*) FILTER (WHERE ((demog_records.reg_status)::text = 'Cancelled'::text)) AS cancelled,
+    count(*) FILTER (WHERE ((demog_records.gender)::text = 'Male'::text)) AS male,
+    count(*) FILTER (WHERE ((demog_records.gender)::text = 'Female'::text)) AS female,
+    count(*) FILTER (WHERE ((demog_records.gender)::text <> ALL ((ARRAY['Male'::character varying, 'Female'::character varying])::text[]))) AS gender_unknown,
+    count(*) FILTER (WHERE (demog_records.overseas = true)) AS overseas,
+    count(*) FILTER (WHERE (demog_records.military = true)) AS military,
+    count(*) FILTER (WHERE (demog_records.protected = true)) AS protected,
+    count(*) FILTER (WHERE (demog_records.disabled = true)) AS disabled,
+    count(*) FILTER (WHERE (demog_records.absentee_ongoing = true)) AS absentee_ongoing,
+    count(*) FILTER (WHERE (demog_records.absentee_in_this_election = true)) AS absentee_in_this_election
+   FROM demog_records
+  GROUP BY demog_records.election_id, demog_records.jurisdiction
+  ORDER BY demog_records.jurisdiction
+  WITH NO DATA;
+
+
+--
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1250,4 +1276,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150804123823');
 INSERT INTO schema_migrations (version) VALUES ('20150805050710');
 
 INSERT INTO schema_migrations (version) VALUES ('20150805084021');
+
+INSERT INTO schema_migrations (version) VALUES ('20150805102249');
 
