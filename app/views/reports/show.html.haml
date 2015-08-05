@@ -11,7 +11,11 @@
         %tr
           %th Jurisdiction
           - @report.columns.each do |c|
-            %th= raw c.gsub('- ', '<br/>')
+            - a, f = c.split(' - ')
+            - a = a.split(/(?=[A-Z][a-z])/).join('<br/>')
+            - f = f.split(/(?=[A-Z][a-z])/).join('<br/>')
+            - h = "#{a}<br/><br/>#{f}"
+            %th= raw h
         %tr
           %th Total
           - @report.columns.each do |c|
