@@ -24,8 +24,31 @@ class VoterDemographicsByLocalityReport
 
       cdata = @counties[j] || {}
       COLUMNS.each do |k, f|
-        cdata[k] = r.send(f)
+        v = r.send(f)
+        cdata[k] = v unless v == 0
       end
+      @counties[j] = cdata
+    end
+
+    Reports::VotersRace.where(election_id: election.id).each do |r|
+      j = r.jurisdiction
+      k = r.race
+
+      @columns << k unless @columns.include?(k)
+
+      cdata = @counties[j] || {}
+      cdata[k] = r.cnt
+      @counties[j] = cdata
+    end
+
+    Reports::VotersParty.where(election_id: election.id).each do |r|
+      j = r.jurisdiction
+      k = r.political_party_name
+
+      @columns << k unless @columns.include?(k)
+
+      cdata = @counties[j] || {}
+      cdata[k] = r.cnt
       @counties[j] = cdata
     end
   end

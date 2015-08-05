@@ -694,6 +694,36 @@ CREATE MATERIALIZED VIEW voter_demographics_by_locality AS
 
 
 --
+-- Name: voters_party; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW voters_party AS
+ SELECT demog_records.election_id,
+    demog_records.jurisdiction,
+    demog_records.political_party_name,
+    count(*) AS cnt
+   FROM demog_records
+  GROUP BY demog_records.election_id, demog_records.jurisdiction, demog_records.political_party_name
+  ORDER BY demog_records.jurisdiction, demog_records.political_party_name
+  WITH NO DATA;
+
+
+--
+-- Name: voters_race; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW voters_race AS
+ SELECT demog_records.election_id,
+    demog_records.jurisdiction,
+    demog_records.race,
+    count(*) AS cnt
+   FROM demog_records
+  GROUP BY demog_records.election_id, demog_records.jurisdiction, demog_records.race
+  ORDER BY demog_records.jurisdiction, demog_records.race
+  WITH NO DATA;
+
+
+--
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1278,4 +1308,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150805050710');
 INSERT INTO schema_migrations (version) VALUES ('20150805084021');
 
 INSERT INTO schema_migrations (version) VALUES ('20150805102249');
+
+INSERT INTO schema_migrations (version) VALUES ('20150805112939');
+
+INSERT INTO schema_migrations (version) VALUES ('20150805112953');
 
