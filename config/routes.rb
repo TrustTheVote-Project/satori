@@ -8,8 +8,6 @@ Rails.application.routes.draw do
     resources :demog_files
     resources :upload_jobs, only: [ :destroy ]
 
-    get '/reports/events_by_county'             => 'reports#events_by_county', as: 'events_by_county_report'
-    get '/reports/events_by_county_by_demog'    => 'reports#events_by_county_by_demog', as: 'events_by_county_by_demog_report'
     get '/reports/events_by_locality'           => 'reports#events_by_locality', as: 'events_by_locality_report'
     get '/reports/events_by_locality_by_uocava' => 'reports#events_by_locality_by_uocava', as: 'events_by_locality_by_uocava_report'
     get '/reports/events_by_locality_by_gender' => 'reports#events_by_locality_by_gender', as: 'events_by_locality_by_gender_report'

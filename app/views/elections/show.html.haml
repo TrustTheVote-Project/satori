@@ -38,8 +38,6 @@
 = section_row "Reports", 'reports', state: 'always_open'
 .row.section#reports
   .col-sm-12
-    %p= link_to "Events by County", [ @election, :events_by_county_report ]
-    %p= link_to "Events by County by Demog", [ @election, :events_by_county_by_demog_report ]
     %p= link_to "Events by Locality", [ @election, :events_by_locality_report ]
     %p= link_to "Events by Locality by Demog: UOCAVA", [ @election, :events_by_locality_by_uocava_report ]
     %p= link_to "Events by Locality by Demog: Gender", [ @election, :events_by_locality_by_gender_report ]

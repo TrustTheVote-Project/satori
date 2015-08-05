@@ -1,7 +1,7 @@
 .page-header
-  %h2 Report: Events by Locality by Demographics: Gender
+  %h2 Report: #{@title}
   %p= link_to "Back to Election: '#{@election.name}'", @election
-  %p= link_to "Export to CSV", election_events_by_locality_by_gender_report_path(@election, format: 'csv')
+  %p= link_to "Export to CSV", @csv_path
 
 .row
   .col-sm-12
