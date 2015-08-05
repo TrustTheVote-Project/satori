@@ -167,7 +167,8 @@ CREATE TABLE elections (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     account_id integer,
-    owner_id integer
+    owner_id integer,
+    data_locked boolean
 );
 
 
@@ -1247,4 +1248,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150804103656');
 INSERT INTO schema_migrations (version) VALUES ('20150804123823');
 
 INSERT INTO schema_migrations (version) VALUES ('20150805050710');
+
+INSERT INTO schema_migrations (version) VALUES ('20150805084021');
 

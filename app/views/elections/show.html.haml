@@ -24,10 +24,6 @@
 = section_row "Election Data", 'logs', state: 'always_open'
 .row.section#logs
   .col-sm-12
-    %p.text-right
-      = link_to "Upload logs", [ :new, @election, :transaction_log ], class: 'btn btn-default'
-      = link_to "Upload voters", [ :new, @election, :demog_file ], class: 'btn btn-default'
-
     = react_component "ElectionDataTable"
     -# = react_component "TransactionLogsTable", data_url: election_transaction_logs_url(@election)
     -# = react_component "DemogFilesTable", data_url: election_demog_files_url(@election)

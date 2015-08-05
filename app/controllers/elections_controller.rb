@@ -16,7 +16,11 @@ class ElectionsController < BaseController
     @election = election
     respond_to do |format|
       format.html do
-        gon.data_url = election_url(@election)
+        gon.data_url        = election_url(@election)
+        gon.new_vtl_url     = new_election_transaction_log_url(@election)
+        gon.new_demog_url   = new_election_demog_file_url(@election)
+        gon.lock_data_url   = lock_data_election_url(@election)
+        gon.unlock_data_url = unlock_data_election_url(@election)
       end
 
       format.json do
@@ -53,6 +57,26 @@ class ElectionsController < BaseController
     else
       render :edit
     end
+  end
+
+  # locks data
+  def lock_data
+    @election = election
+    @election.data_locked = true
+    @election.save!
+
+    show
+    render :show
+  end
+
+  # unlocks data
+  def unlock_data
+    @election = election
+    @election.data_locked = false
+    @election.save!
+
+    show
+    render :show
   end
 
   # deletes election

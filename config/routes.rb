@@ -4,6 +4,11 @@ Rails.application.routes.draw do
   get "/dashboard" => "user_dashboard#show", as: 'dashboard'
 
   resources :elections do
+    member do
+      post :lock_data
+      post :unlock_data
+    end
+
     resources :transaction_logs
     resources :demog_files
     resources :upload_jobs, only: [ :destroy ]

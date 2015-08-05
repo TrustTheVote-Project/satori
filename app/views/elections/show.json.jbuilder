@@ -1,6 +1,7 @@
 json.success   true
 json.has_demog @demog_files.present?
 json.has_vtl   @vt_logs.present?
+json.locked    @election.data_locked?
 
 json.rows [ @demog_files.to_a, @vt_logs.to_a ].flatten do |l|
   json.id             l.id
