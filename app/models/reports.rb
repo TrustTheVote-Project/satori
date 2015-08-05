@@ -6,6 +6,9 @@ class Reports
       REFRESH MATERIALIZED VIEW events_by_locality_by_uocava;
       REFRESH MATERIALIZED VIEW events_by_locality_by_gender;
       REFRESH MATERIALIZED VIEW voter_demographics_by_locality;
+      REFRESH MATERIALIZED VIEW voters_race;
+      REFRESH MATERIALIZED VIEW voters_party;
+      REFRESH MATERIALIZED VIEW voters_birth_decade_view;
     SQL
   end
 

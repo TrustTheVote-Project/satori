@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     get '/reports/events_by_locality_by_uocava' => 'reports#events_by_locality_by_uocava', as: 'events_by_locality_by_uocava_report'
     get '/reports/events_by_locality_by_gender' => 'reports#events_by_locality_by_gender', as: 'events_by_locality_by_gender_report'
     get '/reports/voter_demographics_by_locality' => 'reports#voter_demographics_by_locality', as: 'voter_demographics_by_locality_report'
+    get '/reports/voter_age_demographics_by_locality' => 'reports#voter_age_demographics_by_locality', as: 'voter_age_demographics_by_locality_report'
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

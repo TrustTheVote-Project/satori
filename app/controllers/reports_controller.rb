@@ -33,6 +33,13 @@ class ReportsController < BaseController
     html_or_csv_response
   end
 
+  def voter_age_demographics_by_locality
+    @report   = VoterYearOfBirthReport.new(@election)
+    @title    = "Voter Age Demographics By Locality: Year of Birth"
+    @csv_path = election_voter_age_demographics_by_locality_report_path(@election, format: 'csv')
+    html_or_csv_response
+  end
+
   private
 
   def load_election

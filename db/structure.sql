@@ -694,6 +694,21 @@ CREATE MATERIALIZED VIEW voter_demographics_by_locality AS
 
 
 --
+-- Name: voters_birth_decade; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW voters_birth_decade AS
+ SELECT demog_records.election_id,
+    demog_records.jurisdiction,
+    (demog_records.year_of_birth / 10) AS decade,
+    count(*) AS cnt
+   FROM demog_records
+  GROUP BY demog_records.election_id, demog_records.jurisdiction, (demog_records.year_of_birth / 10)
+  ORDER BY demog_records.jurisdiction
+  WITH NO DATA;
+
+
+--
 -- Name: voters_party; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1312,4 +1327,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150805102249');
 INSERT INTO schema_migrations (version) VALUES ('20150805112939');
 
 INSERT INTO schema_migrations (version) VALUES ('20150805112953');
+
+INSERT INTO schema_migrations (version) VALUES ('20150805114458');
 
