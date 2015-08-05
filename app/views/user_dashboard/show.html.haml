@@ -3,17 +3,14 @@
     %h3= t '.title'
     %p.welcome= raw t '.welcome', user: current_user.full_name, org: current_user.account.name, elections: pluralize(@elections.count, 'recent election')
 
-    = section_row t('.elections'), 'elections', state: 'always_open'
+    .row.section-row
+      .col-xs-6
+        %h4= t('.elections')
+      .col-xs-6.text-right
+        = link_to t('.new_election'), :new_election, class: 'btn btn-xs btn-primary'
+
     .row
-      .col-sm-2
-        = link_to t('.new_election'), :new_election, class: 'btn btn-primary'
-      .col-sm-10
-        .checkbox
-          %label
-            = check_box_tag 'current_elections'
-            Show current elections
-    .row
-      .col-sm-12
+      .col-sm-12.no-pad
         %table.table.table-striped
           - if @elections.empty?
             %tr
@@ -22,15 +19,13 @@
             - @elections.each do |e|
               %tr
                 %td
-                  %p
-                    Election Name: #{link_to e.name, e}<br/>
-                    Election Date: #{e.held_on.try(:strftime, "%d %B %Y")}<br/>
-                    Start/End Dates for Reporting: #{e.voter_start_on.try(:strftime, "%d %B %Y")} - #{e.voter_end_on.try(:strftime, "%d %B %Y")}<br/>
-                    Owner: #{e.owner.try(:full_name) || 'Unknown'}
-                  %p
-                    = link_to "Election Profile", [ :edit, e ], class: 'btn btn-xs btn-info'
-                    = link_to "Election Analytics", e, class: 'btn btn-xs btn-info'
-                    = link_to "Delete", e, method: 'delete', data: { confirm: 'Delete this election?' }, class: 'btn btn-xs btn-danger'
+                  Election Name: #{link_to e.name, e}<br/>
+                  Election Date: #{e.held_on.try(:strftime, "%d %B %Y")}<br/>
+                  Start/End Dates for Reporting: #{e.voter_start_on.try(:strftime, "%d %B %Y")} - #{e.voter_end_on.try(:strftime, "%d %B %Y")}<br/>
+                  Owner: #{e.owner.try(:full_name) || 'Unknown'}
+                %td.text-right
+                  = link_to "Select", e, class: 'btn btn-xs btn-info'
+                  -# = link_to "Delete", e, method: 'delete', data: { confirm: 'Delete this election?' }, class: 'btn btn-xs btn-danger'
 
     = section_row t('.your_team'), 'your-team'
     .row.section.collapse#your-team

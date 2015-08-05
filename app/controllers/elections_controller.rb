@@ -14,6 +14,18 @@ class ElectionsController < BaseController
   # election
   def show
     @election = election
+    respond_to do |format|
+      format.html do
+        gon.data_url = election_url(@election)
+      end
+
+      format.json do
+        @demog_files = @election.demog_files
+        @vt_logs     = @election.transaction_logs
+        @uploads     = @election.upload_jobs.active
+        @errors      = @election.upload_jobs.errors
+      end
+    end
   end
 
   # creates election

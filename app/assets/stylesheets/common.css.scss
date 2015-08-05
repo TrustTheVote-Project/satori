@@ -30,3 +30,16 @@
 table#report {
   th, td { white-space: nowrap; }
 }
+
+.no-pad {
+  padding-left: 0;
+  padding-right: 0;
+
+  tr > td:first-child {
+    padding-left: 15px !important;
+  }
+
+  tr > td:last-child {
+    padding-right: 15px !important;
+  }
+}
