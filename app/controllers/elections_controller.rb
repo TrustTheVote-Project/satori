@@ -15,19 +15,19 @@ class ElectionsController < BaseController
   def show
     @election = election
     respond_to do |format|
-      format.html do
-        gon.data_url        = election_url(@election)
-        gon.new_vtl_url     = new_election_transaction_log_url(@election)
-        gon.new_demog_url   = new_election_demog_file_url(@election)
-        gon.lock_data_url   = lock_data_election_url(@election)
-        gon.unlock_data_url = unlock_data_election_url(@election)
-      end
-
       format.json do
         @demog_files = @election.demog_files
         @vt_logs     = @election.transaction_logs
         @uploads     = @election.upload_jobs.active
         @errors      = @election.upload_jobs.errors
+      end
+
+      format.html do
+        gon.data_url        = election_url(@election, format: 'json')
+        gon.new_vtl_url     = new_election_transaction_log_url(@election)
+        gon.new_demog_url   = new_election_demog_file_url(@election)
+        gon.lock_data_url   = lock_data_election_url(@election)
+        gon.unlock_data_url = unlock_data_election_url(@election)
       end
     end
   end
