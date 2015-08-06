@@ -136,11 +136,11 @@ UNION ALL
 UNION ALL
  SELECT transaction_records.election_id,
     transaction_records.jurisdiction,
-    COALESCE(transaction_records.notes, 'Other'::character varying) AS key,
+    COALESCE(transaction_records.notes, 'cancelOther'::character varying) AS key,
     count(*) AS cnt
    FROM transaction_records
   WHERE ((transaction_records.action)::text = 'cancelVoterRecord'::text)
-  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, transaction_records.notes
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, COALESCE(transaction_records.notes, 'cancelOther'::character varying)
   ORDER BY 2
   WITH NO DATA;
 

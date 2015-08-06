@@ -17,9 +17,9 @@ class CancellationReasonsByLocalityReport < BaseReport
 
   def initial_columns
     [ "Registered Voters", "Cancellations" ] +
-    [ "cancelUnderage", "cancelDuplicate", "cancelCitizenship", "cancelOther",
+    [ "cancelUnderage", "cancelDuplicate", "cancelCitizenship",
       "cancelTransferOut", "cancelDeceased", "cancelFelonyConviction", "cancelIncapacitated" ].sort +
-    [ "Other" ]
+    [ "cancelOther" ]
   end
 
 end

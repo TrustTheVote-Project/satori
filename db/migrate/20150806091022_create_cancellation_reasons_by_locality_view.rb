@@ -15,10 +15,10 @@ class CreateCancellationReasonsByLocalityView < ActiveRecord::Migration
 
         UNION ALL
 
-        SELECT election_id, jurisdiction, COALESCE(notes, 'Other') AS key, COUNT(*) cnt
+        SELECT election_id, jurisdiction, COALESCE(notes, 'cancelOther') AS key, COUNT(*) cnt
           FROM transaction_records
           WHERE action = 'cancelVoterRecord'
-          GROUP BY election_id, jurisdiction, notes
+          GROUP BY election_id, jurisdiction, key
 
         ORDER BY jurisdiction;
     }
