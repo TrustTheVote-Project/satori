@@ -9,6 +9,7 @@ class Reports
       REFRESH MATERIALIZED VIEW voters_race;
       REFRESH MATERIALIZED VIEW voters_party;
       REFRESH MATERIALIZED VIEW voters_birth_decade_view;
+      REFRESH MATERIALIZED VIEW cancellation_reasons_by_locality;
     SQL
   end
 

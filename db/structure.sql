@@ -64,6 +64,88 @@ ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
 
 
 --
+-- Name: demog_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE demog_records (
+    id integer NOT NULL,
+    demog_file_id integer,
+    election_id integer,
+    account_id integer,
+    voter_id character varying,
+    jurisdiction character varying,
+    reg_date date,
+    year_of_birth integer,
+    reg_status character varying,
+    gender character varying,
+    race character varying,
+    political_party_name character varying,
+    overseas boolean,
+    military boolean,
+    protected boolean,
+    disabled boolean,
+    absentee_ongoing boolean,
+    absentee_in_this_election boolean,
+    precinct_split_id character varying,
+    zip_code character varying
+);
+
+
+--
+-- Name: transaction_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE transaction_records (
+    id integer NOT NULL,
+    log_id integer,
+    voter_id character varying NOT NULL,
+    recorded_at timestamp without time zone NOT NULL,
+    action character varying NOT NULL,
+    jurisdiction character varying NOT NULL,
+    form character varying,
+    form_note character varying,
+    leo character varying,
+    notes character varying,
+    comment character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    election_id integer,
+    account_id integer
+);
+
+
+--
+-- Name: cancellation_reasons_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW cancellation_reasons_by_locality AS
+ SELECT demog_records.election_id,
+    demog_records.jurisdiction,
+    'Registered Voters'::text AS key,
+    count(*) AS cnt
+   FROM demog_records
+  GROUP BY demog_records.election_id, demog_records.jurisdiction
+UNION ALL
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    'Cancellations'::text AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE ((transaction_records.action)::text = 'cancelVoterRecord'::text)
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction
+UNION ALL
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    COALESCE(transaction_records.notes, 'Other'::character varying) AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE ((transaction_records.action)::text = 'cancelVoterRecord'::text)
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, transaction_records.notes
+  ORDER BY 2
+  WITH NO DATA;
+
+
+--
 -- Name: demog_files; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -101,34 +183,6 @@ CREATE SEQUENCE demog_files_id_seq
 --
 
 ALTER SEQUENCE demog_files_id_seq OWNED BY demog_files.id;
-
-
---
--- Name: demog_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE demog_records (
-    id integer NOT NULL,
-    demog_file_id integer,
-    election_id integer,
-    account_id integer,
-    voter_id character varying,
-    jurisdiction character varying,
-    reg_date date,
-    year_of_birth integer,
-    reg_status character varying,
-    gender character varying,
-    race character varying,
-    political_party_name character varying,
-    overseas boolean,
-    military boolean,
-    protected boolean,
-    disabled boolean,
-    absentee_ongoing boolean,
-    absentee_in_this_election boolean,
-    precinct_split_id character varying,
-    zip_code character varying
-);
 
 
 --
@@ -189,29 +243,6 @@ CREATE SEQUENCE elections_id_seq
 --
 
 ALTER SEQUENCE elections_id_seq OWNED BY elections.id;
-
-
---
--- Name: transaction_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE transaction_records (
-    id integer NOT NULL,
-    log_id integer,
-    voter_id character varying NOT NULL,
-    recorded_at timestamp without time zone NOT NULL,
-    action character varying NOT NULL,
-    jurisdiction character varying NOT NULL,
-    form character varying,
-    form_note character varying,
-    leo character varying,
-    notes character varying,
-    comment character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    election_id integer,
-    account_id integer
-);
 
 
 --
@@ -1331,4 +1362,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150805112953');
 INSERT INTO schema_migrations (version) VALUES ('20150805114458');
 
 INSERT INTO schema_migrations (version) VALUES ('20150806083453');
+
+INSERT INTO schema_migrations (version) VALUES ('20150806091022');
 

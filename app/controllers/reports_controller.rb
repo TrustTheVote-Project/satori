@@ -40,6 +40,13 @@ class ReportsController < BaseController
     html_or_csv_response
   end
 
+  def cancellation_reasons_by_locality
+    @report   = CancellationReasonsByLocalityReport.new(@election)
+    @title    = "Registration Cancellation Reasons by Locality"
+    @csv_path = election_cancellation_reasons_by_locality_report_path(@election, format: 'csv')
+    html_or_csv_response
+  end
+
   private
 
   def load_election
