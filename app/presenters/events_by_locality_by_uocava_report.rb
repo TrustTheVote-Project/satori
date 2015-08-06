@@ -1,6 +1,6 @@
 class EventsByLocalityByUocavaReport
 
-  VERSIONS = %w{ total local UOCAVA }
+  VERSIONS = %w{ Total Local UOCAVA }
 
   def initialize(election)
     @columns = initial_columns
@@ -12,13 +12,13 @@ class EventsByLocalityByUocavaReport
       key = r.key
 
       cdata = @counties[j] || {}
-      cdata["#{key} - total"] = r.total
-      cdata["#{key} - local"] = r.local
+      cdata["#{key} - Total"] = r.total
+      cdata["#{key} - Local"] = r.local
       cdata["#{key} - UOCAVA"] = r.uocava
       @counties[j] = cdata
 
-      @totals_row["#{key} - total"]  = (@totals_row["#{key} - total"] || 0) + r.total
-      @totals_row["#{key} - local"]  = (@totals_row["#{key} - local"] || 0) + r.local
+      @totals_row["#{key} - Total"]  = (@totals_row["#{key} - Total"] || 0) + r.total
+      @totals_row["#{key} - Local"]  = (@totals_row["#{key} - Local"] || 0) + r.local
       @totals_row["#{key} - UOCAVA"] = (@totals_row["#{key} - UOCAVA"] || 0) + r.uocava
     end
   end

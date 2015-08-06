@@ -31,6 +31,12 @@ table#report {
   th, td { white-space: nowrap; }
 }
 
+#report_wrapper {
+  th {
+    vertical-align: bottom;
+  }
+}
+
 .no-pad {
   padding-left: 0;
   padding-right: 0;
