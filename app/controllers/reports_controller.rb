@@ -47,6 +47,20 @@ class ReportsController < BaseController
     html_or_csv_response
   end
 
+  def registration_rejection_reasons_by_locality
+    @report   = RegRejectionReasonsByLocalityReport.new(@election)
+    @title    = "Registration Rejection Reasons by Locality"
+    @csv_path = election_registration_rejection_reasons_by_locality_report_path(@election, format: 'csv')
+    html_or_csv_response
+  end
+
+  def ballot_rejection_reasons_by_locality
+    @report   = BallotRejectionReasonsByLocalityReport.new(@election)
+    @title    = "Ballot Rejection Reasons by Locality"
+    @csv_path = election_ballot_rejection_reasons_by_locality_report_path(@election, format: 'csv')
+    html_or_csv_response
+  end
+
   private
 
   def load_election

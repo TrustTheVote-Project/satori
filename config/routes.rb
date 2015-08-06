@@ -19,6 +19,8 @@ Rails.application.routes.draw do
     get '/reports/voter_demographics_by_locality' => 'reports#voter_demographics_by_locality', as: 'voter_demographics_by_locality_report'
     get '/reports/voter_age_demographics_by_locality' => 'reports#voter_age_demographics_by_locality', as: 'voter_age_demographics_by_locality_report'
     get '/reports/cancellation_reasons_by_locality' => 'reports#cancellation_reasons_by_locality', as: 'cancellation_reasons_by_locality_report'
+    get '/reports/registration_rejection_reasons_by_locality' => 'reports#registration_rejection_reasons_by_locality', as: 'registration_rejection_reasons_by_locality_report'
+    get '/reports/ballot_rejection_reasons_by_locality' => 'reports#ballot_rejection_reasons_by_locality', as: 'ballot_rejection_reasons_by_locality_report'
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

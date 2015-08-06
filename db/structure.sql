@@ -115,6 +115,45 @@ CREATE TABLE transaction_records (
 
 
 --
+-- Name: ballot_rejection_reasons_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW ballot_rejection_reasons_by_locality AS
+ SELECT demog_records.election_id,
+    demog_records.jurisdiction,
+    'Registered Voters'::text AS key,
+    count(*) AS cnt
+   FROM demog_records
+  GROUP BY demog_records.election_id, demog_records.jurisdiction
+UNION ALL
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    concat(transaction_records.form, ' - Accepted') AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE (((transaction_records.action)::text = 'approve'::text) AND ((transaction_records.form)::text = ANY ((ARRAY['AbsenteeBallot'::character varying, 'ProvisionalBallot'::character varying])::text[])))
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, concat(transaction_records.form, ' - Accepted')
+UNION ALL
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    concat(transaction_records.form, ' - Rejected') AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE (((transaction_records.action)::text = 'reject'::text) AND ((transaction_records.form)::text = ANY ((ARRAY['AbsenteeBallot'::character varying, 'ProvisionalBallot'::character varying])::text[])))
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, concat(transaction_records.form, ' - Rejected')
+UNION ALL
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    concat(transaction_records.form, ' - ', COALESCE(transaction_records.notes, 'Other'::character varying)) AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE (((transaction_records.notes)::text ~~ 'reject%'::text) AND ((transaction_records.form)::text = ANY ((ARRAY['AbsenteeBallot'::character varying, 'ProvisionalBallot'::character varying])::text[])))
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, concat(transaction_records.form, ' - ', COALESCE(transaction_records.notes, 'Other'::character varying))
+  ORDER BY 2
+  WITH NO DATA;
+
+
+--
 -- Name: cancellation_reasons_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -431,6 +470,45 @@ UNION ALL
   WHERE (((records.form)::text = 'AbsenteeBallot'::text) AND ((records.action)::text = ANY ((ARRAY['receive'::character varying, 'returnedUndelivered'::character varying])::text[])))
   GROUP BY records.election_id, records.jurisdiction, records.action
   ORDER BY 2, 3
+  WITH NO DATA;
+
+
+--
+-- Name: reg_rejection_reasons_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW reg_rejection_reasons_by_locality AS
+ SELECT demog_records.election_id,
+    demog_records.jurisdiction,
+    'Registered Voters'::text AS key,
+    count(*) AS cnt
+   FROM demog_records
+  GROUP BY demog_records.election_id, demog_records.jurisdiction
+UNION ALL
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    'Rejected VR or AB Requests'::text AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE (((transaction_records.action)::text = 'reject'::text) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying, 'AbsenteeRequest'::character varying])::text[])))
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction
+UNION ALL
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    transaction_records.notes AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE (((transaction_records.action)::text = 'reject'::text) AND ((transaction_records.notes)::text = ANY ((ARRAY['rejectLate'::character varying, 'rejectUnsigned'::character varying, 'rejectIncomplete'::character varying, 'rejectFelonyConviction'::character varying, 'rejectIncapacitated'::character varying, 'rejectUnderage'::character varying, 'rejectCitizenship'::character varying])::text[])))
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction, transaction_records.notes
+UNION ALL
+ SELECT transaction_records.election_id,
+    transaction_records.jurisdiction,
+    'Other'::text AS key,
+    count(*) AS cnt
+   FROM transaction_records
+  WHERE ((((transaction_records.action)::text = 'reject'::text) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying, 'AbsenteeRequest'::character varying])::text[]))) AND (transaction_records.notes IS NULL))
+  GROUP BY transaction_records.election_id, transaction_records.jurisdiction
+  ORDER BY 2
   WITH NO DATA;
 
 
@@ -1364,4 +1442,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150805114458');
 INSERT INTO schema_migrations (version) VALUES ('20150806083453');
 
 INSERT INTO schema_migrations (version) VALUES ('20150806091022');
+
+INSERT INTO schema_migrations (version) VALUES ('20150806100209');
+
+INSERT INTO schema_migrations (version) VALUES ('20150806101539');
 
