@@ -1,47 +1,36 @@
-class EventsByLocalityByGenderReport
+class EventsByLocalityByGenderReport < BaseReport
 
-  VERSIONS = %w{ total male female }
+  VERSIONS = %w{ Total Male Female }
 
   def initialize(election)
-    @columns = initial_columns
-    @counties = {}
-    @totals_row = {}
-
+    super()
     Reports::EventsByLocalityByGender.where(election_id: election.id).each do |r|
       j   = r.jurisdiction
       key = r.key
 
-      cdata = @counties[j] || {}
-      cdata["#{key} - total"]  = r.total
-      cdata["#{key} - male"]   = r.male
-      cdata["#{key} - female"] = r.female
-      @counties[j] = cdata
+      cdata = @rows[j] || {}
+      cdata["#{key} - Total"]  = r.total
+      cdata["#{key} - Male"]   = r.male
+      cdata["#{key} - Female"] = r.female
+      @rows[j] = cdata
 
-      @totals_row["#{key} - total"]  = (@totals_row["#{key} - total"] || 0) + r.total
-      @totals_row["#{key} - male"]  = (@totals_row["#{key} - male"] || 0) + r.male
-      @totals_row["#{key} - female"] = (@totals_row["#{key} - female"] || 0) + r.female
+      @totals_row["#{key} - Total"]  = (@totals_row["#{key} - Total"] || 0) + r.total
+      @totals_row["#{key} - Male"]  = (@totals_row["#{key} - Male"] || 0) + r.male
+      @totals_row["#{key} - Female"] = (@totals_row["#{key} - Female"] || 0) + r.female
     end
   end
 
-  def columns
-    @columns
-  end
-
-  def rows
-    @counties
-  end
-
-  def totals_row
-    @totals_row
+  def highlight_class_for_column(col_name)
+    if col_name =~ /Male$/
+      'em1'
+    elsif col_name =~ /Female$/
+      'em2'
+    end
   end
 
   private
 
   def initial_columns
-
-    # ACTION_VALUES    = %w( identify voterPollCheckin cancelVoterRecord start discard complete submit receive approve reject sentToVoter returnedUndelivered ).map(&:downcase)
-    # FORM_VALUES      = %w( VoterRegistration VoterRegistrationAbsenteeRequest VoterRecordUpdate VoterRecordUpdateAbsenteeRequest AbsenteeRequest AbsenteeBallot ProvisionalBallot PollBookEntry VoterCard ).map(&:downcase)
-
     c = []
 
     forms = %w( VoterRegistration VoterRegistrationAbsenteeRequest VoterRecordUpdate VoterRecordUpdateAbsenteeRequest AbsenteeRequest AbsenteeBallot ProvisionalBallot )

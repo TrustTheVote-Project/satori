@@ -1,21 +1,19 @@
-class EventsByLocalityByUocavaReport
+class EventsByLocalityByUocavaReport < BaseReport
 
   VERSIONS = %w{ Total Local UOCAVA }
 
   def initialize(election)
-    @columns = initial_columns
-    @counties = {}
-    @totals_row = {}
+    super()
 
     Reports::EventsByLocalityByUocava.where(election_id: election.id).each do |r|
       j   = r.jurisdiction
       key = r.key
 
-      cdata = @counties[j] || {}
+      cdata = @rows[j] || {}
       cdata["#{key} - Total"] = r.total
       cdata["#{key} - Local"] = r.local
       cdata["#{key} - UOCAVA"] = r.uocava
-      @counties[j] = cdata
+      @rows[j] = cdata
 
       @totals_row["#{key} - Total"]  = (@totals_row["#{key} - Total"] || 0) + r.total
       @totals_row["#{key} - Local"]  = (@totals_row["#{key} - Local"] || 0) + r.local
@@ -23,16 +21,12 @@ class EventsByLocalityByUocavaReport
     end
   end
 
-  def columns
-    @columns
-  end
-
-  def rows
-    @counties
-  end
-
-  def totals_row
-    @totals_row
+  def highlight_class_for_column(col_name)
+    if col_name =~ /Local$/
+      'em1'
+    elsif col_name =~ /UOCAVA$/
+      'em2'
+    end
   end
 
   private

@@ -31,9 +31,22 @@ table#report {
   th, td { white-space: nowrap; }
 }
 
-#report_wrapper {
+$em-base: #f4f4f4;
+$em-step: #0a0a0a;
+$odd-shade: #050505;
+#report_wrapper, table#report {
   th {
     vertical-align: bottom;
+  }
+
+  .em1 { background-color: $em-base; }
+  .em2 { background-color: $em-base - $em-step; }
+  .em3 { background-color: $em-base - $em-step * 2; }
+
+  .odd {
+    .em1 { background-color: $em-base - $odd-shade; }
+    .em2 { background-color: $em-base - $odd-shade - $em-step; }
+    .em3 { background-color: $em-base - $odd-shade - $em-step * 2; }
   }
 }
 

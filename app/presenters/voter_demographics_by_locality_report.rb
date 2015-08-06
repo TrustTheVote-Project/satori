@@ -1,4 +1,4 @@
-class VoterDemographicsByLocalityReport
+class VoterDemographicsByLocalityReport < BaseReport
 
   COLUMNS = {
     'Registered Voters'       => :total,
@@ -16,18 +16,17 @@ class VoterDemographicsByLocalityReport
     'absenteeInThisElection'  => :absentee_in_this_election }
 
   def initialize(election)
-    @columns = COLUMNS.keys
-    @counties = {}
+    super()
 
     Reports::VoterDemographicsByLocality.where(election_id: election.id).each do |r|
       j = r.jurisdiction
 
-      cdata = @counties[j] || {}
+      cdata = @rows[j] || {}
       COLUMNS.each do |k, f|
         v = r.send(f)
         cdata[k] = v unless v == 0
       end
-      @counties[j] = cdata
+      @rows[j] = cdata
     end
 
     Reports::VotersRace.where(election_id: election.id).each do |r|
@@ -36,9 +35,9 @@ class VoterDemographicsByLocalityReport
 
       @columns << k unless @columns.include?(k)
 
-      cdata = @counties[j] || {}
+      cdata = @rows[j] || {}
       cdata[k] = r.cnt
-      @counties[j] = cdata
+      @rows[j] = cdata
     end
 
     Reports::VotersParty.where(election_id: election.id).each do |r|
@@ -47,18 +46,14 @@ class VoterDemographicsByLocalityReport
 
       @columns << k unless @columns.include?(k)
 
-      cdata = @counties[j] || {}
+      cdata = @rows[j] || {}
       cdata[k] = r.cnt
-      @counties[j] = cdata
+      @rows[j] = cdata
     end
   end
 
-  def columns
-    @columns
-  end
-
-  def rows
-    @counties
+  def initial_columns
+    COLUMNS.keys
   end
 
 end

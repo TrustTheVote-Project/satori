@@ -1,9 +1,7 @@
-class EventsByLocalityReport
+class EventsByLocalityReport < BaseReport
 
   def initialize(election)
-    @columns = initial_columns
-    @counties = {}
-    @totals_row = {}
+    super()
 
     Reports::EventsByLocality.where(election_id: election.id).each do |r|
       j   = r.jurisdiction
@@ -15,33 +13,17 @@ class EventsByLocalityReport
 
       @columns << key unless @columns.include?(key)
 
-      cdata = @counties[j] || {}
+      cdata = @rows[j] || {}
       cdata[key] = (cdata[key] || 0) + r.cnt
-      @counties[j] = cdata
+      @rows[j] = cdata
 
       @totals_row[key] = (@totals_row[key] || 0) + r.cnt
     end
   end
 
-  def columns
-    @columns
-  end
-
-  def rows
-    @counties
-  end
-
-  def totals_row
-    @totals_row
-  end
-
   private
 
   def initial_columns
-
-    # ACTION_VALUES    = %w( identify voterPollCheckin cancelVoterRecord start discard complete submit receive approve reject sentToVoter returnedUndelivered ).map(&:downcase)
-    # FORM_VALUES      = %w( VoterRegistration VoterRegistrationAbsenteeRequest VoterRecordUpdate VoterRecordUpdateAbsenteeRequest AbsenteeRequest AbsenteeBallot ProvisionalBallot PollBookEntry VoterCard ).map(&:downcase)
-
     c = []
 
     forms = %w( VoterRegistration VoterRegistrationAbsenteeRequest VoterRecordUpdate VoterRecordUpdateAbsenteeRequest AbsenteeRequest AbsenteeBallot ProvisionalBallot )

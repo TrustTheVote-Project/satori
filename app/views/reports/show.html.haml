@@ -15,7 +15,7 @@
             - h = sp.map { |a| a.split(/(?=[A-Z][a-z])/).join('<br/>') }.join("<br/><br/>")
             %th= raw h
 
-        - if @report.respond_to? :totals_row
+        - unless @report.totals_row.blank?
           %tr
             %th Total
             - @report.columns.each do |c|
@@ -27,7 +27,7 @@
           %tr
             %td= county
             - @report.columns.each do |c|
-              %td.text-center= values[c]
+              %td.text-center{ class: @report.highlight_class_for_column(c) }= values[c]
 
 = content_for :scripts do
   = javascript_include_tag "reports"
