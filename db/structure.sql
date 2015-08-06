@@ -700,10 +700,10 @@ CREATE MATERIALIZED VIEW voter_demographics_by_locality AS
 CREATE MATERIALIZED VIEW voters_birth_decade AS
  SELECT demog_records.election_id,
     demog_records.jurisdiction,
-    (demog_records.year_of_birth / 10) AS decade,
+    ((demog_records.year_of_birth - 1) / 10) AS decade,
     count(*) AS cnt
    FROM demog_records
-  GROUP BY demog_records.election_id, demog_records.jurisdiction, (demog_records.year_of_birth / 10)
+  GROUP BY demog_records.election_id, demog_records.jurisdiction, ((demog_records.year_of_birth - 1) / 10)
   ORDER BY demog_records.jurisdiction
   WITH NO DATA;
 
@@ -1329,4 +1329,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150805112939');
 INSERT INTO schema_migrations (version) VALUES ('20150805112953');
 
 INSERT INTO schema_migrations (version) VALUES ('20150805114458');
+
+INSERT INTO schema_migrations (version) VALUES ('20150806083453');
 
