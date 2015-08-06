@@ -21,7 +21,7 @@ class ReportsController < BaseController
 
   def events_by_locality_by_gender
     @report   = EventsByLocalityByGenderReport.new(@election)
-    @title    = "Events by Locality by Demographics: UOCAVA"
+    @title    = "Events by Locality by Demographics: Gender"
     @csv_path = election_events_by_locality_by_gender_report_path(@election, format: 'csv')
     html_or_csv_response
   end
