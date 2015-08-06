@@ -14,9 +14,9 @@ class EventsByLocalityByGenderReport < BaseReport
       cdata["#{key} - Female"] = r.female
       @rows[j] = cdata
 
-      @totals_row["#{key} - Total"]  = (@totals_row["#{key} - Total"] || 0) + r.total
-      @totals_row["#{key} - Male"]  = (@totals_row["#{key} - Male"] || 0) + r.male
-      @totals_row["#{key} - Female"] = (@totals_row["#{key} - Female"] || 0) + r.female
+      add_to_totals "#{key} - Total",  r.total
+      add_to_totals "#{key} - Male",   r.male
+      add_to_totals "#{key} - Female", r.female
     end
   end
 

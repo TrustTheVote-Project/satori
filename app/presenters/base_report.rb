@@ -17,6 +17,11 @@ class BaseReport
 
   protected
 
+  # add the count to the keyed total
+  def add_to_totals(key, value)
+    @totals_row[key] = (@totals_row[key] || 0) + value
+  end
+
   # override to provide the ordered set of initial columns
   def initial_columns
     []

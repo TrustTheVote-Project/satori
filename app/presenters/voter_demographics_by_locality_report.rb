@@ -24,32 +24,49 @@ class VoterDemographicsByLocalityReport < BaseReport
       cdata = @rows[j] || {}
       COLUMNS.each do |k, f|
         v = r.send(f)
-        cdata[k] = v unless v == 0
+        unless v == 0
+          cdata[k] = v
+          add_to_totals k, v
+        end
       end
       @rows[j] = cdata
     end
 
     Reports::VotersRace.where(election_id: election.id).each do |r|
       j = r.jurisdiction
-      k = r.race
+      k = r.race || 'No Race'
 
-      @columns << k unless @columns.include?(k)
+      k = 'Other Race' if k == 'Other'
+
+      @columns << k unless k == 'Other Race' || k == 'No Race' || @columns.include?(k)
 
       cdata = @rows[j] || {}
       cdata[k] = r.cnt
       @rows[j] = cdata
+
+      add_to_totals k, r.cnt
     end
+
+    @columns << 'Other Race'
+    @columns << 'No Race'
 
     Reports::VotersParty.where(election_id: election.id).each do |r|
       j = r.jurisdiction
-      k = r.political_party_name
+      k = r.political_party_name || 'No Party'
 
-      @columns << k unless @columns.include?(k)
+      k = 'Other Party' if k == 'Other'
+
+      @columns << k unless k == 'Other Party' || k == 'No Party' || @columns.include?(k)
 
       cdata = @rows[j] || {}
       cdata[k] = r.cnt
       @rows[j] = cdata
+
+      add_to_totals k, r.cnt
     end
+
+    @columns << 'Other Party'
+    @columns << 'No Party'
   end
 
   def initial_columns

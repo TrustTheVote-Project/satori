@@ -17,7 +17,7 @@ class EventsByLocalityReport < BaseReport
       cdata[key] = (cdata[key] || 0) + r.cnt
       @rows[j] = cdata
 
-      @totals_row[key] = (@totals_row[key] || 0) + r.cnt
+      add_to_totals key, r.cnt
     end
   end
 

@@ -15,9 +15,9 @@ class EventsByLocalityByUocavaReport < BaseReport
       cdata["#{key} - UOCAVA"] = r.uocava
       @rows[j] = cdata
 
-      @totals_row["#{key} - Total"]  = (@totals_row["#{key} - Total"] || 0) + r.total
-      @totals_row["#{key} - Local"]  = (@totals_row["#{key} - Local"] || 0) + r.local
-      @totals_row["#{key} - UOCAVA"] = (@totals_row["#{key} - UOCAVA"] || 0) + r.uocava
+      add_to_totals "#{key} - Total", r.total
+      add_to_totals "#{key} - Local", r.local
+      add_to_totals "#{key} - UOCAVA", r.uocava
     end
   end
 
@@ -32,10 +32,6 @@ class EventsByLocalityByUocavaReport < BaseReport
   private
 
   def initial_columns
-
-    # ACTION_VALUES    = %w( identify voterPollCheckin cancelVoterRecord start discard complete submit receive approve reject sentToVoter returnedUndelivered ).map(&:downcase)
-    # FORM_VALUES      = %w( VoterRegistration VoterRegistrationAbsenteeRequest VoterRecordUpdate VoterRecordUpdateAbsenteeRequest AbsenteeRequest AbsenteeBallot ProvisionalBallot PollBookEntry VoterCard ).map(&:downcase)
-
     c = []
 
     forms = %w( VoterRegistration VoterRegistrationAbsenteeRequest VoterRecordUpdate VoterRecordUpdateAbsenteeRequest AbsenteeRequest AbsenteeBallot ProvisionalBallot )
