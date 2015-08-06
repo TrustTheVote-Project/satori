@@ -52,6 +52,7 @@ class EventsByLocalityByUocavaReport
     c += generate_columns("cancelVoterRecord")
     c += generate_columns("voterPollCheckin")
     c += generate_columns("sentToVoter - VoterCard")
+    c += generate_columns("sentToVoter - AbsenteeRequest")
     c += generate_columns("sentToVoter - AbsenteeBallot")
     c += generate_columns("receive - AbsenteeBallot")
     c += generate_columns("returnedUndelivered - AbsenteeBallot")

@@ -11,10 +11,8 @@
         %tr
           %th Jurisdiction
           - @report.columns.each do |c|
-            - a, f = c.split(' - ')
-            - a = a.split(/(?=[A-Z][a-z])/).join('<br/>')
-            - f = f && f.split(/(?=[A-Z][a-z])/).join('<br/>')
-            - h = [ a, f ].reject(&:blank?).join("<br/><br/>")
+            - sp = c.split(' - ')
+            - h = sp.map { |a| a.split(/(?=[A-Z][a-z])/).join('<br/>') }.join("<br/><br/>")
             %th= raw h
 
         - if @report.respond_to? :totals_row
