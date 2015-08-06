@@ -51,6 +51,7 @@ class EventsByLocalityReport
     c << "cancelVoterRecord"
     c << "voterPollCheckin"
     c << "sentToVoter - VoterCard"
+    c << "sentToVoter - AbsenteeRequest"
     c << "sentToVoter - AbsenteeBallot"
     c << "receive - AbsenteeBallot"
     c << "returnedUndelivered - AbsenteeBallot"
