@@ -18,4 +18,17 @@ class VoterYearOfBirthReport < BaseReport
     @columns.sort!
   end
 
+  def initial_columns
+    start_year = 1901
+    last_year  = Date.today.year - 17
+    last_decade = (last_year / 10.0).ceil * 10 + 1
+
+    decades = (last_decade - start_year) / 10
+
+    decades.times.map do |i|
+      y = start_year + i * 10
+      "#{y}-#{y + 9}"
+    end
+  end
+
 end
