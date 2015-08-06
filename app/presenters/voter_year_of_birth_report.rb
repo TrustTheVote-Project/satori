@@ -13,6 +13,8 @@ class VoterYearOfBirthReport < BaseReport
       cdata = @rows[j] || {}
       cdata[k] = r.cnt
       @rows[j] = cdata
+
+      @totals_row[k] = (@totals_row[k] || 0) + r.cnt
     end
 
     @columns.sort!
