@@ -43,7 +43,7 @@ table#report {
 $em-base: #f4f4f4;
 $em-step: #0a0a0a;
 $odd-shade: #050505;
-#report_wrapper, table#report {
+.dataTables_wrapper, table.report {
   th {
     vertical-align: bottom;
   }

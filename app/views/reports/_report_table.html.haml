@@ -1,0 +1,22 @@
+- report = report_table
+%table.report.stripe.compact.nowrap.dataTable
+  %thead
+    %tr
+      %th Jurisdiction
+      - report.columns.each do |c|
+        - sp = c.split(' - ')
+        - h = sp.map { |a| a.split(/(?=[A-Z][a-z])/).join('<br/>') }.join("<br/><br/>")
+        %th= raw h
+
+    - unless report.totals_row.blank?
+      %tr
+        %th Total
+        - report.columns.each do |c|
+          %th.text-center= report.totals_row[c]
+
+  %tbody
+    - report.rows.each do |county, values|
+      %tr
+        %td= county
+        - @report.columns.each do |c|
+          %td.text-center{ class: report.highlight_class_for_column(c) }= values[c]
