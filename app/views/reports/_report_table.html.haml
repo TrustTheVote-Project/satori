@@ -4,7 +4,8 @@
     %tr
       %th Jurisdiction
       - report.columns.each do |c|
-        - sp = c.split(' - ')
+        - name = report.column_name(c)
+        - sp = name.split(' - ')
         - h = sp.map { |a| a.split(/(?=[A-Z][a-z])/).join('<br/>') }.join("<br/><br/>")
         %th= raw h
 
@@ -18,5 +19,5 @@
     - report.rows.each do |county, values|
       %tr
         %td= county
-        - @report.columns.each do |c|
+        - report.columns.each do |c|
           %td.text-center{ class: report.highlight_class_for_column(c) }= values[c]

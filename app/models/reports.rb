@@ -12,6 +12,8 @@ class Reports
       REFRESH MATERIALIZED VIEW cancellation_reasons_by_locality;
       REFRESH MATERIALIZED VIEW reg_rejection_reasons_by_locality;
       REFRESH MATERIALIZED VIEW ballot_rejection_reasons_by_locality;
+      REFRESH MATERIALIZED VIEW reg_forms_received_by_locality;
+      REFRESH MATERIALIZED VIEW reg_basic_stats_by_locality;
     SQL
   end
 

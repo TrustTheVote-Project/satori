@@ -15,6 +15,11 @@ class BaseReport
     nil
   end
 
+  # by default the key is the name, but you can decide to have a shorter key
+  def column_name(c)
+    c
+  end
+
   protected
 
   # add the count to the keyed total

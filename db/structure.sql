@@ -474,6 +474,101 @@ UNION ALL
 
 
 --
+-- Name: reg_basic_stats_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW reg_basic_stats_by_locality AS
+ SELECT demog_records.election_id,
+    demog_records.jurisdiction,
+    count(DISTINCT demog_records.voter_id) AS total,
+    count(DISTINCT demog_records.voter_id) FILTER (WHERE ((demog_records.reg_status)::text = 'Active'::text)) AS active,
+    count(DISTINCT demog_records.voter_id) FILTER (WHERE ((demog_records.reg_status)::text = 'Inactive'::text)) AS inactive
+   FROM demog_records
+  GROUP BY demog_records.election_id, demog_records.jurisdiction
+  WITH NO DATA;
+
+
+--
+-- Name: reg_forms_received_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW reg_forms_received_by_locality AS
+ WITH reg_forms AS (
+         SELECT transaction_records.id,
+            transaction_records.log_id,
+            transaction_records.voter_id,
+            transaction_records.recorded_at,
+            transaction_records.action,
+            transaction_records.jurisdiction,
+            transaction_records.form,
+            transaction_records.form_note,
+            transaction_records.leo,
+            transaction_records.notes,
+            transaction_records.comment,
+            transaction_records.created_at,
+            transaction_records.updated_at,
+            transaction_records.election_id,
+            transaction_records.account_id
+           FROM transaction_records
+          WHERE ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[]))
+        ), reg_forms_received AS (
+         SELECT reg_forms.id,
+            reg_forms.log_id,
+            reg_forms.voter_id,
+            reg_forms.recorded_at,
+            reg_forms.action,
+            reg_forms.jurisdiction,
+            reg_forms.form,
+            reg_forms.form_note,
+            reg_forms.leo,
+            reg_forms.notes,
+            reg_forms.comment,
+            reg_forms.created_at,
+            reg_forms.updated_at,
+            reg_forms.election_id,
+            reg_forms.account_id
+           FROM reg_forms
+          WHERE ((reg_forms.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[]))
+        ), reg_forms_other_stats AS (
+         SELECT reg_forms.election_id,
+            reg_forms.jurisdiction,
+            count(*) AS other
+           FROM reg_forms
+          WHERE (((reg_forms.action)::text <> ALL ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND (reg_forms.recorded_at > (date_trunc('year'::text, now()) - '1 year'::interval)))
+          GROUP BY reg_forms.election_id, reg_forms.jurisdiction
+        ), reg_changes_received AS (
+         SELECT transaction_records.election_id,
+            transaction_records.jurisdiction,
+            count(*) AS changes
+           FROM transaction_records
+          WHERE ((((transaction_records.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[]))) AND (transaction_records.recorded_at > (date_trunc('year'::text, now()) - '1 year'::interval)))
+          GROUP BY transaction_records.election_id, transaction_records.jurisdiction
+        ), reg_forms_received_part_stats AS (
+         SELECT reg_forms_received.election_id,
+            reg_forms_received.jurisdiction,
+            count(*) AS total,
+            count(*) FILTER (WHERE ((reg_forms_received.notes)::text = 'acceptNewRequest'::text)) AS new,
+            count(*) FILTER (WHERE ((reg_forms_received.notes)::text = ANY ((ARRAY['acceptDuplicate'::character varying, 'cancelDuplicate'::character varying])::text[]))) AS duplicate,
+            count(*) FILTER (WHERE ((reg_forms_received.notes)::text ~~ 'reject%'::text)) AS rejected
+           FROM reg_forms_received
+          WHERE (reg_forms_received.recorded_at > (date_trunc('year'::text, now()) - '1 year'::interval))
+          GROUP BY reg_forms_received.election_id, reg_forms_received.jurisdiction
+        )
+ SELECT s.election_id,
+    s.jurisdiction,
+    s.total,
+    s.new,
+    s.duplicate,
+    s.rejected,
+    COALESCE(c.changes, (0)::bigint) AS changes,
+    COALESCE(o.other, (0)::bigint) AS other
+   FROM ((reg_forms_received_part_stats s
+     LEFT JOIN reg_changes_received c ON (((s.election_id = c.election_id) AND ((s.jurisdiction)::text = (c.jurisdiction)::text))))
+     LEFT JOIN reg_forms_other_stats o ON (((s.election_id = o.election_id) AND ((s.jurisdiction)::text = (o.jurisdiction)::text))))
+  WITH NO DATA;
+
+
+--
 -- Name: reg_rejection_reasons_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1446,4 +1541,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150806091022');
 INSERT INTO schema_migrations (version) VALUES ('20150806100209');
 
 INSERT INTO schema_migrations (version) VALUES ('20150806101539');
+
+INSERT INTO schema_migrations (version) VALUES ('20150807091618');
+
+INSERT INTO schema_migrations (version) VALUES ('20150807092812');
 
