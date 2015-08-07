@@ -10,5 +10,20 @@
     %h3 Registration: Basic Statistics
     = render partial: 'report_table', object: RegBasicStatsByLocalityReport.new(@election)
 
+    %h3 Registration Forms Received Since #{Date.today.year - 1}
+    = render partial: 'report_table', object: RegFormsReceivedByLocalityReport.new(@election)
+
+    %h3 Total Registrations By Origin
+    = render partial: 'report_table', object: RegsByOriginReport.new(Reports::TotalRegByOrigin, @election)
+
+    %h3 New Registrations By Origin
+    = render partial: 'report_table', object: RegsByOriginReport.new(Reports::NewRegByOrigin, @election)
+
+    %h3 Duplicate Registrations By Origin
+    = render partial: 'report_table', object: RegsByOriginReport.new(Reports::DuplicateRegByOrigin, @election)
+
+    %h3 Invalid Registrations By Origin
+    = render partial: 'report_table', object: RegsByOriginReport.new(Reports::InvalidRegByOrigin, @election)
+
 = content_for :scripts do
   = javascript_include_tag "reports"

@@ -42,7 +42,7 @@ class CreateRegFormsReceivedByLocalityView < ActiveRecord::Migration
             GROUP BY election_id, jurisdiction
           )
 
-          SELECT s.*, COALESCE(c.changes, 0) AS changes, COALESCE(o.other, 0) AS other
+          SELECT s.*, COALESCE(c.changes, 0) AS record_changes, COALESCE(o.other, 0) AS other
           FROM reg_forms_received_part_stats s
             LEFT JOIN reg_changes_received c ON s.election_id=c.election_id AND s.jurisdiction=c.jurisdiction
             LEFT JOIN reg_forms_other_stats o ON s.election_id=o.election_id AND s.jurisdiction=o.jurisdiction
