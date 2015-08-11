@@ -1,0 +1,17 @@
+en:
+  admin_admin:
+    registration_requests:
+      index:
+        title: Registration Requests
+
+      show:
+        title: Review Request
+
+      destroy:
+        success: Registration request has been deleted.
+
+      reject:
+        success: Registration request has been rejected.
+
+      reopen:
+        success: Registration request has been reopened.

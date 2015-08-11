@@ -1,0 +1,40 @@
+eavs:
+  user_not_found: User account is not found. Please check your details and retry.
+  successful_login: Successfully logged in.
+  successful_logout: Successfully logged out.
+
+  user_sessions:
+    new:
+      title: EAVSweb
+      body: "Select your state and organization, then provide your account info:"
+      non_listed_states: "For states not listed, there are no elections organizations registered to use this service."
+      logo_image: tenet/brand.png
+
+      users: Users
+      admins: Admins
+
+      user_id_placeholder:
+        user: Email
+        admin: User Id
+
+      password_placeholder:
+        user: Password
+        admin: Security Token
+
+      forgot_userid: Forgot User Id
+      about_security_tokens: About Security Tokens
+
+      logo_image: tenet/brand.png
+      logo_image_alt: Logo
+
+      form:
+        state_prompt: State
+        organization: Organization
+        login: User ID
+        password: Password
+        submit: Log In
+
+    create:
+      successful_login: Logged in successfully
+      organization_suspended: Could not log in. Your organization is suspended.
+      user_suspended: Could not log in. Your account is suspended.

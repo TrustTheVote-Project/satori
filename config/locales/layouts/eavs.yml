@@ -1,0 +1,31 @@
+eavs:
+  layouts:
+    admin:
+      header:
+        title: Satori Admin
+        banner_image: tenet/brand.png
+        banner_image_alt_text: TrustTheVote Common Services Framework
+
+    public:
+      header:
+        title: "EAVSweb: Digitally Create and Submit Your Election Administration and Voting Survey"
+        banner_image: tenet/brand.png
+        banner_image_alt_text: TrustTheVote Common Services Framework
+        banner_text: TrustTheVote Common Services Framework
+        banner_subtext: A strong authentication and access control framework for multi-tenant managed services. (To override the defaults, create config/locales/layouts.en.yml in your app and use the copy of this file as the base.)
+
+      footer:
+        para1: "Satori created by <a href='http://trustthevote.org'>TrustTheVote Project</a>"
+        para2: " and provided by <a href='http//osetfoundation.org'>Open Source Election Technology (OSET) Foundation</a>"
+        links:
+          number: 3
+          separator: " | "
+          link_1:
+            title: "Legal"
+            url: /
+          link_2:
+            title: "Privacy"
+            url: /
+          link_3:
+            title: "Contact"
+            url: /

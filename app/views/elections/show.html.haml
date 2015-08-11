@@ -1,6 +1,6 @@
 .page-header
-  %h2 Election Performance Analytics for: #{@election.name}
-  %p Lorem ipsum
+  %h2= raw t '.title', election: @election.name
+  %p= raw t '.info'
 
 = section_row "Election Profile", 'profile'
 .row.section.collapse#profile

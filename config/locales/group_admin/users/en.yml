@@ -1,0 +1,42 @@
+en:
+  group_admin:
+    users:
+      index:
+        title: Users
+        add_user: New User
+
+      new:
+        title: New User
+        form:
+          submit: Add New User
+
+      edit:
+        title: "Edit user: %{user}"
+        form:
+          submit: Save Changes
+
+      suspend:
+        success: User has been suspended
+
+      unsuspend:
+        success: User has been unsuspend
+
+      form:
+        email: Email
+        first_name: First Name
+        last_name: Last Name
+        phone: Telephone
+        password: Password
+        new_password: Assign New Password
+        password_confirmation: Confirm Password
+        role: Role
+        cancel: Cancel
+
+      create:
+        success: User record has been created.
+
+      update:
+        success: User record has been updated.
+
+      destroy:
+        success: User record has been deleted.

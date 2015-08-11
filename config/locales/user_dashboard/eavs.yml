@@ -1,0 +1,17 @@
+eavs:
+  user_dashboard:
+    show:
+      title: Dashboard
+      welcome: >
+        <p>Hello %{user}! You and your workgroup at %{org} currently
+        have %{elections} available for EAVS submission.</p>
+
+        <p>To get started, select an election from the list below,
+        or create a new election workspace for EAVS submission.</p>
+
+        <p>You can also view your workgroup, following your list
+        of elections below.</p>
+
+      elections: Elections
+      new_election: Create New Election
+      none: There are no elections yet

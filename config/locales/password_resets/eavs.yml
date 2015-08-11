@@ -1,0 +1,64 @@
+eavs:
+  password_resets:
+    user_not_found: "Couldn't find your user record."
+
+    new:
+      title: Forgot password
+      body: Please enter your user account email address, and we will send password reset instructions to it.
+      form:
+        email: Email
+        submit: Submit request
+
+    create:
+      success:
+        init:  Password initialization instructions have been sent to your email
+        reset: Password reset instructions have been sent to your email
+
+    edit:
+      title: Reset password
+      body: Please enter the new password.
+      form:
+        password: New password
+        password_confirmation: Again
+        submit: Set password
+
+    init:
+      title: Initialize password
+      body: Please enter the password.
+      form:
+        password: Password
+        password_confirmation: Again
+        submit: Set password
+
+    update:
+      success:
+        init: Password has been set
+        reset: New password has been set
+
+  notifications:
+    reset_password_email:
+      subject:
+        reset: Reset your password
+        init: Set your password
+      body:
+        reset: |
+          Hello %{name}!
+
+          You have requested to reset your password for (insert application name)
+
+          To choose a new password, just follow this link:
+
+          %{url}
+
+          (Override this message with notifications.reset_password_email.body.reset)
+
+        init: |
+          Hello %{name}!
+
+          Your new user account for (insert application name) has been created.
+
+          To get started, you need to set a password, by following this link:
+
+          %{url}
+
+          (Override this message with notifications.reset_password_email.body.init)

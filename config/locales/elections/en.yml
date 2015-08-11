@@ -1,0 +1,27 @@
+en:
+  elections:
+    show:
+      title: "Election Performance Analytics for:<br/>%{election}"
+      info: >
+        <p>Performing election analytics and reporting is an easy process that uses raw data from your existing voter records system:</p>
+        <p>
+          <ol>
+            <li>First, upload two kinds of existing data, using a Common Data Format.</li>
+            <li>Then, choose which automatically generated report to view.</li>
+          </ol>
+        </p>
+
+        <p>Your initial view of each report is a web page with tabular statistics.
+        However, you can download and save each report as a CSV file.  Coming soon,
+        you will be able to choose a format for later viewing including standalone
+        HTML or PDF.</p>
+
+        <p>Below, the "<strong>Status</strong>" section provides the current status of the reporting
+        so far from efforts of your workgroup.  The "<strong>Election Profile</strong>" provides information
+        about the election reporting you're engaged in; this could be the election itself,
+        reporting dates, and more.  Below the Status and Profile, the "<strong>Election Data</strong>"
+        provides details about the data of each kind that your workgroup has uploaded;
+        for example, this could be voter administrative events or voter demographics.  
+        This area also allows uploading of additional raw data.  Finally, your list of
+        available reports is below that.  Select a report to view and choose your
+        download options.</p>

@@ -1,5 +1,5 @@
-en:
-  version: Satori
+eavs:
+  version: EAVS
   no_records: There are no records yet.
   sure_to_delete: Are you sure to delete?
   unauthenticated: Please log in to access this area.

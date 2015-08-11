@@ -1,0 +1,28 @@
+eavs:
+  errors:
+    messages:
+      strong: "is too weak. Need at least 8 characters: lowercase, uppercase, digits, no username"
+      ssh_key: "is not a valid public key"
+      admin_key_uniqueness: "is used by admin"
+
+  profile:
+    edit:
+      title: My Profile
+
+      form:
+        first_name: First Name
+        last_name: Last Name
+        login: 'Login ID <span style="font-weight: normal; color: #888;">(system-assigned)</span>'
+        title: Job Title or Description
+        phone: Telephone
+        submit: Update Profile
+
+        current_password: Current password
+        password: New password
+        password_confirmation: Again
+        submit_change_password: Change password
+
+    update:
+      current_password_invalid: "Your current password doesn't match"
+      success_update_profile: Profile has been updated
+      success_change_password: Password has been changed

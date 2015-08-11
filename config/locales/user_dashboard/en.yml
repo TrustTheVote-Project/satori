@@ -3,12 +3,14 @@ en:
     show:
       title: Dashboard
       welcome: >
-        <p>Welcome %{user}! You and your workgroup at %{org} currently
+        <p>Hello %{user}! You and your workgroup at %{org} currently
         have %{elections} available for analysis.</p>
 
         <p>To get started, select an election from the list below, or
-        create a new election workspace for analysis. You can also view
-        your workgroup, following your list of elections below.</p>
+        create a new election workspace for analysis.</p>
+
+        <p>You can also view your workgroup, following your list of
+        elections below.</p>
 
       elections: Elections
       new_election: Create New Election

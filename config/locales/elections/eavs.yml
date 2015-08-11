@@ -1,0 +1,28 @@
+eavs:
+  elections:
+    show:
+      title: "Election Administration and Voting Survey for:<br/>%{election}"
+      info: >
+        <p>Compiling an EAVS is a 4-step process that's primarily based
+        on raw data from your existing voter records system:  </p>
+
+        <p>
+          <ol>
+            <li>First, you upload two kinds of existing data, provided in a common
+              data format, and then you choose among the various EAVS reports to view: one for each section of the survey. </li>
+            <li>Second, you view each section of the survey as an individual report, automatically generated from your raw data. </li>
+            <li>Third, in some cases, there is a small amount of supplementary information to enter, to complete that section of the survey. </li>
+            <li>Finally, when satisfied with the survey, you can submit it from EAVSweb, and/or download the complete CSV data for later use.</li>
+          </ol>
+        </p>
+
+        <p>Below, the "<strong>Status</strong> section provides the current status of
+        the survey so far from efforts of your workgroup.  The "<strong>Election Profile</strong>"
+        provides information about the election reporting you're engaged in; this could
+        be the election itself, reporting dates, and more.  Below the Status and
+        Profile, the "<strong>Election Data</strong>" provides details about the data of each kind that
+        your workgroup has uploaded; for example, this could be voter administrative
+        events or voter demographics.  This area also allows uploading of additional
+        raw data.  Finally, your list of available reports is below that.  Select a
+        report to view, add supplemental information, or approve its readiness for
+        submission.</p>

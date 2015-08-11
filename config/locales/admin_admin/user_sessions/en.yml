@@ -1,0 +1,13 @@
+en:
+  admin_admin:
+    please_login: Please login to access this area
+
+    user_sessions:
+      new:
+        logo_image: tenet/brand.png
+        logo_image_alt: Logo
+        title: Welcome back!
+        body: Log in to the admin console.
+        login: User ID
+        password: Secure Token
+        submit: Log In

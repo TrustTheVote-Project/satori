@@ -1,0 +1,60 @@
+en:
+  admin_admin:
+    groups:
+      index:
+        title: Organizations
+        add_group: New Organization
+
+      show:
+        state: State
+        website: Website
+        administrator: Administrator
+        title: Job Title or Description
+        email: Email
+        phone: Phone
+
+      destroy:
+        success: Organization has been deleted.
+
+      new:
+        title: New Organization
+        organization: Organization
+        administrator: Administrator
+        all_required: All fields are required.
+        ssh_key_help: >
+          Ask {name} to provide their SSH Public Key.
+          The key can be created with the TrustTheVote
+          <a href="#TBD">SoftToken App</a>. <a href="#TDB">Learn more</a>
+        form:
+          name: Name
+          state: State
+          login: Login
+          first_name: First Name
+          last_name: Last Name
+          title: Title
+          phone: Phone
+          email: Email
+          ssh_public_key: SSH Public Key
+          submit: Create Organization
+          cancel: Cancel
+
+      create:
+        success: Organization has been created
+
+      suspend:
+        success: Organization has been suspended
+
+      unsuspend:
+        success: Organization has been unsuspended
+
+  notifications:
+    group_created:
+      subject: Your organization has been approved
+      body: |
+        Hi %{name}!
+
+        Your organization registration request has been approved.
+
+        Please log in here:
+
+        %{login_url}

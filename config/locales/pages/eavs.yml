@@ -1,0 +1,64 @@
+eavs:
+  tenet:
+    pages:
+      landing:
+        hero: "EVSweb is an interactive tool to compile a State's Election Administration and Voting Survey (EAVS)."
+        title: "EAVSweb: Interactive Election Administration and Voting Survey (EAVS) Submission"
+        details: >
+          Sign in to access your existing EAVS data and surveys, or compile new ones. Or sign up for an account
+          for exclusive use by your State or local elections office team.
+        signup:
+          info: "Register an admin account for your organization:"
+          button: Sign Up
+        login:
+          info: "Already have an account:"
+          button: Log In
+
+      about:
+        title: About
+        subtitle: ""
+        body: "Nunc non felis sed est euismod placerat. Proin rhoncus porta est, id gravida dolor consectetur a. Nunc vitae massa urna. Pellentesque vel imperdiet mauris. Pellentesque aliquam elit sit amet tortor vulputate iaculis. Donec tristique semper augue, eget rutrum ligula. Praesent luctus orci ac venenatis viverra. Nulla luctus eleifend est id rhoncus. Nullam vel mi tincidunt, ultrices est eget, vulputate nulla."
+
+      about_security_tokens:
+        title: How to use Security Tokens
+        body: >
+          <p>A Security Token is a unique code that is used instead of a password
+          during log in. Each token expires after a few minutes, and is specific to your
+          admin account. This provides increased protection against unauthorized
+          access.</p>
+
+          <h4>Obtaining a Security Token</h4>
+
+          <p>To obtain Security Tokens for the first
+          time, you’ll need to create an SSH Key Pair. (Scroll down for instructions.)
+          Security Tokens are then available on your computer by one of two methods:</p>
+
+          <ol>
+            <li><strong>SoftToken App</strong><br/>
+              Run the TrustTheVote SoftToken App, and copy&paste the displayed
+              Security Token into the log in screen. Download for Windows, Mac, or Linux</li>
+
+            <li><strong>Terminal</strong><br/>
+              Open the Terminal app on your computer and enter the following
+              command:<br/><br/>
+              <pre>ssh st@bb-app.com</pre><br/>
+              You’ll receive a response that looks like:<br/><br/>
+              <pre>Security Token: yghr24308hr214rh</pre><br/>
+              Copy &amp; paste the returned Security Token into the log in screen.</li>
+          </ol>
+
+          <h4>First-time Setup: Creating an SSH Key Pair</h4>
+
+          <p>Before you can use Security Tokens, you’ll need to create an SSH Key Pair and send the
+          <strong>Public Key</strong> to the sys-admin of your account. There are two key creation
+          methods:</p>
+
+          <ol>
+            <li><strong>SoftToken App</strong><br/>
+            Download, install, and run the app. Select a pass phrase for the app. Keep this secure. Then generate a new SSH Key Pair. Copy
+          the Public Key into an email and send it to the sys-admin of your account.</li>
+
+            <li><strong>Terminal</strong><br/>
+            Open the Terminal app on your computer and enter the following command: ....</li>
+          </ol>
+

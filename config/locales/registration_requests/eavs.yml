@@ -1,0 +1,42 @@
+eavs:
+  registration_requests:
+    new:
+      title: Register for EAVSweb
+      body: "We’ll review your request and contact you via email or phone to complete the registration of your organization."
+      your_organization: Your Organization
+      your_information: Your Information
+      all_required: All fields are required
+      form:
+        organization_name:
+          label: Name
+          placeholder: Office of Secretary of State
+        state:
+          label: State
+        website:
+          label: Website
+          placeholder: "http://sos.somestate.gov"
+        admin_first_name:
+          label: First Name
+          placeholder: Jane
+        admin_last_name:
+          label: Last Name
+          placeholder: Smith
+        admin_title:
+          label: Job Title or Description
+          placeholder: IT Director
+        admin_email:
+          label: Email
+          placeholder: "jane@sos.somestate.gov"
+        admin_phone:
+          label: Telephone
+          placeholder: "(000) 000-0000"
+        submit: Submit Request
+    create:
+      success: "Your request has been registered"
+
+  validations:
+    required: "is required"
+    invalid_email: "Please provide a valid email address"
+    invalid_phone: "Please provide valid 10 digit phone number"
+    invalid_website: "Please provide a valid URL for your organization"
+
