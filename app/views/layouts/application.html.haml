@@ -1,0 +1,32 @@
+!!!
+%html
+  %head
+    %title= TenetConfig['app_title']
+    %meta{:content => "width=device-width,initial-scale=1,maximum-scale=1.0,user-scalable=no", :name => "viewport"}
+
+    = stylesheet_link_tag "tenet/application", :media => "all"
+    = stylesheet_link_tag "application", :media => "all"
+    = csrf_meta_tags
+
+  %body{ id: @page_id }
+    - unless @no_header
+      = render "layouts/public/header"
+
+    - content = render "layouts/public/content"
+    - if @no_container
+      #wrap.sheet
+        = content
+    - else
+      #wrap
+        = content_for :jumbotron
+        .sheet.container
+          = content
+        #push
+
+    - unless @no_footer
+      = render "layouts/public/footer"
+
+    = include_gon
+    = javascript_include_tag "tenet/application"
+    = javascript_include_tag "application"
+    = yield :scripts

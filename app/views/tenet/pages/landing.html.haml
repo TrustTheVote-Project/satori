@@ -1,0 +1,30 @@
+- @page_id = "page_landing"
+- @no_container = false
+
+- content_for :jumbotron do
+  .jumbotron
+    .container
+      .row
+        .col-md-offset-2.col-md-8
+          %p= raw t '.hero'
+
+.container
+  .row
+    .col-md-offset-2.col-md-8
+      .row.welcome
+        .col-md-12
+          %h2= t '.title'
+          = raw t '.details'
+
+      .row
+        .col-md-6
+          .box
+            %span.glyphicon.glyphicon-pencil
+            %p.info= raw t '.signup.info'
+            %p= link_to t(".signup.button"), :new_registration_request, class: 'btn btn-primary'
+
+        .col-md-6
+          .box
+            %span.glyphicon.glyphicon-user
+            %p.info= raw t '.login.info'
+            %p= link_to t(".login.button"), :login, class: 'btn btn-primary'

@@ -1,10 +1,20 @@
-// body {
-//   background-color: #f0f0f0;
-// }
+body {
+  background-color: #e8e8e8;
+}
 
-#wrap > .container {
-  background-color: #fff;
+#wrap {
   overflow: hidden;
+  margin-bottom: -130px;
+}
+
+#push {
+  height: 90px;
+}
+
+.sheet {
+  box-shadow: 0 0 20px rgba(0,0,0,.1);
+  background-color: #fff;
+  padding-bottom: 20px;
 }
 
 .block {
