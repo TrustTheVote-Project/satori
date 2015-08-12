@@ -18,6 +18,7 @@ class Reports
       REFRESH MATERIALIZED VIEW new_reg_by_origin;
       REFRESH MATERIALIZED VIEW duplicate_reg_by_origin;
       REFRESH MATERIALIZED VIEW invalid_reg_by_origin;
+      REFRESH MATERIALIZED VIEW removed_voters;
     SQL
   end
 

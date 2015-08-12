@@ -25,5 +25,11 @@
     %h3 Invalid Registrations By Origin
     = render partial: 'report_table', object: RegsByOriginReport.new(Reports::InvalidRegByOrigin, @election)
 
+    %h3 Removal Noticies Sent
+    = render partial: 'report_table', object: RemovalNoticiesSentReport.new(@election)
+
+    %h3 Removed Voters
+    = render partial: 'report_table', object: RemovedVotersReport.new(@election)
+
 = content_for :scripts do
   = javascript_include_tag "reports"

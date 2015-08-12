@@ -765,6 +765,45 @@ ALTER SEQUENCE registration_requests_id_seq OWNED BY registration_requests.id;
 
 
 --
+-- Name: removed_voters; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW removed_voters AS
+ WITH cancellations AS (
+         SELECT transaction_records.id,
+            transaction_records.log_id,
+            transaction_records.voter_id,
+            transaction_records.recorded_at,
+            transaction_records.action,
+            transaction_records.jurisdiction,
+            transaction_records.form,
+            transaction_records.form_note,
+            transaction_records.leo,
+            transaction_records.notes,
+            transaction_records.comment,
+            transaction_records.created_at,
+            transaction_records.updated_at,
+            transaction_records.election_id,
+            transaction_records.account_id
+           FROM transaction_records
+          WHERE ((transaction_records.action)::text = 'cancelVoterRecord'::text)
+        )
+ SELECT cancellations.election_id,
+    cancellations.jurisdiction,
+    count(*) AS total,
+    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelTransferOut'::text)) AS relocation,
+    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelDeceased'::text)) AS death,
+    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelFelonyConviction'::text)) AS felony,
+    'N/A'::text AS no_response,
+    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelIncapacitated'::text)) AS incompetent,
+    'N/A'::text AS by_voter_request,
+    count(*) FILTER (WHERE ((cancellations.notes)::text = ANY ((ARRAY['cancelUnderage'::character varying, 'cancelCitizenship'::character varying, 'cancelOther'::character varying])::text[]))) AS other
+   FROM cancellations
+  GROUP BY cancellations.election_id, cancellations.jurisdiction
+  WITH NO DATA;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1709,4 +1748,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150807113525');
 INSERT INTO schema_migrations (version) VALUES ('20150807113542');
 
 INSERT INTO schema_migrations (version) VALUES ('20150807113548');
+
+INSERT INTO schema_migrations (version) VALUES ('20150812082054');
 
