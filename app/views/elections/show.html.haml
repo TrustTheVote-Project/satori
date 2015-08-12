@@ -2,6 +2,8 @@
   %h2= raw t '.title', election: @election.name
   %p= raw t '.info'
 
+= react_component "ElectionStatusSection"
+
 = section_row "Election Profile", 'profile'
 .row.section.collapse#profile
   .col-sm-6

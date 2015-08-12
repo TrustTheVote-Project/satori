@@ -28,6 +28,8 @@ class ElectionsController < BaseController
         gon.new_demog_url   = new_election_demog_file_url(@election)
         gon.lock_data_url   = lock_data_election_url(@election)
         gon.unlock_data_url = unlock_data_election_url(@election)
+        gon.election_name   = @election.name
+        gon.complete_message = t('.complete_message')
       end
     end
   end

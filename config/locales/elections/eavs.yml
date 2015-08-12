@@ -26,3 +26,5 @@ eavs:
         raw data.  Finally, your list of available reports is below that.  Select a
         report to view, add supplemental information, or approve its readiness for
         submission.</p>
+      complete_message:
+        EAVS reporting is complete and is eligible for submission by your group administrator.

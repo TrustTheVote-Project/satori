@@ -18,7 +18,7 @@ GIT
 
 GIT
   remote: https://github.com/trustthevote/Tenet-Framework.git
-  revision: 3b82d06c4b8c8926333152c9c03aebf796057515
+  revision: a38f7eb04ca0bae1151acb674369828422411329
   branch: rails-4-2-3
   specs:
     tenet (0.0.1)

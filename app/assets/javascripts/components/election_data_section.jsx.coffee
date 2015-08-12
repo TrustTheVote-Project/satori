@@ -189,3 +189,127 @@ Row = React.createClass
         </a>
       </td>
     </tr>`
+
+# -----------------------------------------------------------------------------
+# Status Section
+# -----------------------------------------------------------------------------
+
+@ElectionStatusSection = React.createClass
+  mixins: [
+    Reflux.connect DataStore, "data"
+  ]
+
+  getInitialState: ->
+    { collapse: false }
+
+  onToggle: (e) ->
+    e.preventDefault()
+    @setState { collapse: !@state.collapse }
+
+  render: ->
+    sectionClass = [ 'row', 'section', if @state.collapse then 'collapse' else null ].join(' ')
+    buttonLabel  = if @state.collapse then 'Show' else 'Hide'
+    
+    data    = @state.data
+
+    `<div>
+      <div className='row section-row'>
+        <div className='col-xs-10'>
+          <h4>Status</h4>
+        </div>
+        <div className='col-xs-2 text-right'>
+          <button className='btn btn-xs btn-default' type='button' onClick={this.onToggle}>{buttonLabel}</button>
+        </div>
+      </div>
+      <div className={sectionClass}>
+        <div className='col-xs-12'>
+          <ElectionStatus data={this.state.data} />
+        </div>
+      </div>
+    </div>`
+
+ElectionStatus = React.createClass
+  render: ->
+    data     = @props.data
+    hasDemog = data.has_demog
+    hasVTL   = data.has_vtl
+    locked   = data.locked
+    name     = gon.election_name
+    reportingState = 'complete' #incomplete' # 'complete', 'submitted'
+
+    if locked
+      if reportingState == 'submitted'
+        `<p>Reporting for election {name} is available based on completed data.<br/>
+        EAVS reporting is complete and has been submitted by your group administrator.</p>`
+      else if reportingState == 'complete'
+        `<p>Reporting for election {name} is available based on completed data.<br/>
+        {gon.complete_message}
+        </p>`
+      else
+        `<p>Reporting for election {name} is available based on completed data.<br/>
+        EAVS reporting is not complete yet -- please check the individual reports below for status.</p>`
+    else
+      # not locked
+      lockDisabled = !hasDemog || !hasVTL
+
+      if !hasDemog and !hasVTL
+        `<div>
+          <p>Reporting for election {name} is currently unavailable because it lacks
+          raw data, for both administrative events and voter demographics.</p>
+          <p>
+            <UploadEventLogsButton />
+            <UploadVoterDataButton />
+            <LockDataButton onClick={actLockData} disabled={lockDisabled}/>
+          </p>
+        </div>`
+      else if hasDemog and !hasVTL
+        `<div>
+          <p>Reporting for election {name} is currently only partially available
+          because it lacks raw data on administrative events.</p>
+          <p>
+            <UploadEventLogsButton />
+          </p>
+        </div>`
+      else if !hasDemog and hasVTL
+        `<div>
+          <p>Reporting for election {name} is currently only partially available
+          because it lacks raw data on voter demographics.</p>
+          <p>
+            <UploadVoterDataButton />
+          </p>
+        </div>`
+      else
+        # complete, not locked
+        `<div>
+          <p>Reporting for election {name} is available based on current raw data.
+          You can choose among the reports below to determine whether you are
+          satisfied with your current reports, and you can run metrics reports to
+          help determine whether you have a satisfactory set of raw data.
+          If not, you can open the two panes below to either augment existing data,
+          or delete previously uploaded data, and then replace it. If your data is
+          complete, you can lock your data sets to finalize your reports.</p>
+          <p>
+            <LockDataButton onClick={actLockData} disabled={lockDisabled}/>
+          </p>
+        </div>`
+
+UploadEventLogsButton = React.createClass
+  render: ->
+    `<span>
+      &nbsp;
+      <a href={gon.new_vtl_url} className='btn btn-default'>Upload Event Logs</a>
+    </span>`
+
+UploadVoterDataButton = React.createClass
+  render: ->
+    `<span>
+      &nbsp;
+      <a href={gon.new_demog_url} className='btn btn-default'>Upload Voter Data</a>
+    </span>`
+
+LockDataButton  = React.createClass
+  render: ->
+    `<span>
+      &nbsp;
+      <a onClick={this.props.onClick} disabled={this.props.disabled} data-confirm='Are you sure to lock?' className='btn btn-default'>Lock Data</a>
+    </span>`
