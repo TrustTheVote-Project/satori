@@ -62,6 +62,14 @@ class ReportsController < BaseController
   end
 
   def eavs_part_a
+    @csv_path = election_eavs_part_a_report_path(@election, format: 'csv')
+    respond_to do |format|
+      format.html
+      format.csv do
+        csv = EAVSPartAReportCSV.new(@election).generate
+        send_csv csv, "#{params[:action]}.csv"
+      end
+    end
   end
 
   private

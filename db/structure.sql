@@ -283,6 +283,336 @@ CREATE MATERIALIZED VIEW duplicate_reg_by_origin AS
 
 
 --
+-- Name: invalid_reg_by_origin; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW invalid_reg_by_origin AS
+ WITH registrations AS (
+         SELECT transaction_records.id,
+            transaction_records.log_id,
+            transaction_records.voter_id,
+            transaction_records.recorded_at,
+            transaction_records.action,
+            transaction_records.jurisdiction,
+            transaction_records.form,
+            transaction_records.form_note,
+            transaction_records.leo,
+            transaction_records.notes,
+            transaction_records.comment,
+            transaction_records.created_at,
+            transaction_records.updated_at,
+            transaction_records.election_id,
+            transaction_records.account_id
+           FROM transaction_records
+          WHERE (((transaction_records.action)::text = 'reject'::text) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[])))
+        )
+ SELECT registrations.election_id,
+    registrations.jurisdiction,
+    count(*) AS total,
+    count(*) FILTER (WHERE ((registrations.notes)::text = 'personalReceived'::text)) AS office,
+    count(*) FILTER (WHERE ((registrations.notes)::text = 'postalReceived'::text)) AS postal,
+    count(*) FILTER (WHERE (((registrations.notes)::text = 'electronicReceived'::text) OR ((registrations.form_note)::text = ANY ((ARRAY['onlineGeneratedPaperless'::character varying, 'onlineGeneratedPaper'::character varying])::text[])))) AS internet,
+    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAmotorVehicles'::text)) AS motor_vehicle_office,
+    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAother'::text)) AS nvra_site,
+    count(*) FILTER (WHERE ((registrations.form_note)::text = 'thirdParty'::text)) AS advocacy_group,
+    count(*) FILTER (WHERE ((registrations.form_note IS NULL) AND (registrations.notes IS NULL))) AS other
+   FROM registrations
+  GROUP BY registrations.election_id, registrations.jurisdiction
+  WITH NO DATA;
+
+
+--
+-- Name: new_reg_by_origin; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW new_reg_by_origin AS
+ WITH registrations AS (
+         SELECT transaction_records.id,
+            transaction_records.log_id,
+            transaction_records.voter_id,
+            transaction_records.recorded_at,
+            transaction_records.action,
+            transaction_records.jurisdiction,
+            transaction_records.form,
+            transaction_records.form_note,
+            transaction_records.leo,
+            transaction_records.notes,
+            transaction_records.comment,
+            transaction_records.created_at,
+            transaction_records.updated_at,
+            transaction_records.election_id,
+            transaction_records.account_id
+           FROM transaction_records
+          WHERE ((((transaction_records.action)::text = 'approve'::text) AND ((transaction_records.notes)::text = 'acceptNewRequest'::text)) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[])))
+        )
+ SELECT registrations.election_id,
+    registrations.jurisdiction,
+    count(*) AS total,
+    'N/A'::text AS office,
+    'N/A'::text AS postal,
+    count(*) FILTER (WHERE ((registrations.form_note)::text = ANY ((ARRAY['onlineGeneratedPaperless'::character varying, 'onlineGeneratedPaper'::character varying])::text[]))) AS internet,
+    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAmotorVehicles'::text)) AS motor_vehicle_office,
+    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAother'::text)) AS nvra_site,
+    count(*) FILTER (WHERE ((registrations.form_note)::text = 'thirdParty'::text)) AS advocacy_group,
+    count(*) FILTER (WHERE ((registrations.form_note IS NULL) AND (registrations.notes IS NULL))) AS other
+   FROM registrations
+  GROUP BY registrations.election_id, registrations.jurisdiction
+  WITH NO DATA;
+
+
+--
+-- Name: reg_basic_stats_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW reg_basic_stats_by_locality AS
+ SELECT demog_records.election_id,
+    demog_records.jurisdiction,
+    count(DISTINCT demog_records.voter_id) AS total,
+    count(DISTINCT demog_records.voter_id) FILTER (WHERE ((demog_records.reg_status)::text = 'Active'::text)) AS active,
+    count(DISTINCT demog_records.voter_id) FILTER (WHERE ((demog_records.reg_status)::text = 'Inactive'::text)) AS inactive
+   FROM demog_records
+  GROUP BY demog_records.election_id, demog_records.jurisdiction
+  WITH NO DATA;
+
+
+--
+-- Name: reg_forms_received_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW reg_forms_received_by_locality AS
+ WITH reg_forms AS (
+         SELECT transaction_records.id,
+            transaction_records.log_id,
+            transaction_records.voter_id,
+            transaction_records.recorded_at,
+            transaction_records.action,
+            transaction_records.jurisdiction,
+            transaction_records.form,
+            transaction_records.form_note,
+            transaction_records.leo,
+            transaction_records.notes,
+            transaction_records.comment,
+            transaction_records.created_at,
+            transaction_records.updated_at,
+            transaction_records.election_id,
+            transaction_records.account_id
+           FROM transaction_records
+          WHERE ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[]))
+        ), reg_forms_received AS (
+         SELECT reg_forms.id,
+            reg_forms.log_id,
+            reg_forms.voter_id,
+            reg_forms.recorded_at,
+            reg_forms.action,
+            reg_forms.jurisdiction,
+            reg_forms.form,
+            reg_forms.form_note,
+            reg_forms.leo,
+            reg_forms.notes,
+            reg_forms.comment,
+            reg_forms.created_at,
+            reg_forms.updated_at,
+            reg_forms.election_id,
+            reg_forms.account_id
+           FROM reg_forms
+          WHERE ((reg_forms.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[]))
+        ), reg_forms_other_stats AS (
+         SELECT reg_forms.election_id,
+            reg_forms.jurisdiction,
+            count(*) AS other
+           FROM reg_forms
+          WHERE (((reg_forms.action)::text <> ALL ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND (reg_forms.recorded_at > (date_trunc('year'::text, now()) - '1 year'::interval)))
+          GROUP BY reg_forms.election_id, reg_forms.jurisdiction
+        ), reg_changes_received AS (
+         SELECT transaction_records.election_id,
+            transaction_records.jurisdiction,
+            count(*) AS changes
+           FROM transaction_records
+          WHERE ((((transaction_records.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[]))) AND (transaction_records.recorded_at > (date_trunc('year'::text, now()) - '1 year'::interval)))
+          GROUP BY transaction_records.election_id, transaction_records.jurisdiction
+        ), reg_forms_received_part_stats AS (
+         SELECT reg_forms_received.election_id,
+            reg_forms_received.jurisdiction,
+            count(*) AS total,
+            count(*) FILTER (WHERE ((reg_forms_received.notes)::text = 'acceptNewRequest'::text)) AS new,
+            count(*) FILTER (WHERE ((reg_forms_received.notes)::text = ANY ((ARRAY['acceptDuplicate'::character varying, 'cancelDuplicate'::character varying])::text[]))) AS duplicate,
+            count(*) FILTER (WHERE ((reg_forms_received.notes)::text ~~ 'reject%'::text)) AS rejected
+           FROM reg_forms_received
+          WHERE (reg_forms_received.recorded_at > (date_trunc('year'::text, now()) - '1 year'::interval))
+          GROUP BY reg_forms_received.election_id, reg_forms_received.jurisdiction
+        )
+ SELECT s.election_id,
+    s.jurisdiction,
+    s.total,
+    s.new,
+    s.duplicate,
+    s.rejected,
+    COALESCE(c.changes, (0)::bigint) AS record_changes,
+    COALESCE(o.other, (0)::bigint) AS other
+   FROM ((reg_forms_received_part_stats s
+     LEFT JOIN reg_changes_received c ON (((s.election_id = c.election_id) AND ((s.jurisdiction)::text = (c.jurisdiction)::text))))
+     LEFT JOIN reg_forms_other_stats o ON (((s.election_id = o.election_id) AND ((s.jurisdiction)::text = (o.jurisdiction)::text))))
+  WITH NO DATA;
+
+
+--
+-- Name: removed_voters; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW removed_voters AS
+ WITH cancellations AS (
+         SELECT transaction_records.id,
+            transaction_records.log_id,
+            transaction_records.voter_id,
+            transaction_records.recorded_at,
+            transaction_records.action,
+            transaction_records.jurisdiction,
+            transaction_records.form,
+            transaction_records.form_note,
+            transaction_records.leo,
+            transaction_records.notes,
+            transaction_records.comment,
+            transaction_records.created_at,
+            transaction_records.updated_at,
+            transaction_records.election_id,
+            transaction_records.account_id
+           FROM transaction_records
+          WHERE ((transaction_records.action)::text = 'cancelVoterRecord'::text)
+        )
+ SELECT cancellations.election_id,
+    cancellations.jurisdiction,
+    count(*) AS total,
+    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelTransferOut'::text)) AS relocation,
+    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelDeceased'::text)) AS death,
+    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelFelonyConviction'::text)) AS felony,
+    'N/A'::text AS no_response,
+    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelIncapacitated'::text)) AS incompetent,
+    'N/A'::text AS by_voter_request,
+    count(*) FILTER (WHERE ((cancellations.notes)::text = ANY ((ARRAY['cancelUnderage'::character varying, 'cancelCitizenship'::character varying, 'cancelOther'::character varying])::text[]))) AS other
+   FROM cancellations
+  GROUP BY cancellations.election_id, cancellations.jurisdiction
+  WITH NO DATA;
+
+
+--
+-- Name: total_reg_by_origin; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW total_reg_by_origin AS
+ WITH registrations AS (
+         SELECT transaction_records.id,
+            transaction_records.log_id,
+            transaction_records.voter_id,
+            transaction_records.recorded_at,
+            transaction_records.action,
+            transaction_records.jurisdiction,
+            transaction_records.form,
+            transaction_records.form_note,
+            transaction_records.leo,
+            transaction_records.notes,
+            transaction_records.comment,
+            transaction_records.created_at,
+            transaction_records.updated_at,
+            transaction_records.election_id,
+            transaction_records.account_id
+           FROM transaction_records
+          WHERE (((transaction_records.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[])))
+        )
+ SELECT registrations.election_id,
+    registrations.jurisdiction,
+    count(*) AS total,
+    count(*) FILTER (WHERE ((registrations.notes)::text = 'personalReceived'::text)) AS office,
+    count(*) FILTER (WHERE ((registrations.notes)::text = 'postalReceived'::text)) AS postal,
+    count(*) FILTER (WHERE (((registrations.notes)::text = 'electronicReceived'::text) OR ((registrations.form_note)::text = ANY ((ARRAY['onlineGeneratedPaperless'::character varying, 'onlineGeneratedPaper'::character varying])::text[])))) AS internet,
+    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAmotorVehicles'::text)) AS motor_vehicle_office,
+    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAother'::text)) AS nvra_site,
+    count(*) FILTER (WHERE ((registrations.form_note)::text = 'thirdParty'::text)) AS advocacy_group,
+    count(*) FILTER (WHERE ((registrations.form_note IS NULL) AND (registrations.notes IS NULL))) AS other
+   FROM registrations
+  GROUP BY registrations.election_id, registrations.jurisdiction
+  WITH NO DATA;
+
+
+--
+-- Name: eavs_part_a_report; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW eavs_part_a_report AS
+ WITH localities AS (
+         SELECT transaction_records.election_id,
+            transaction_records.jurisdiction
+           FROM transaction_records
+          GROUP BY transaction_records.election_id, transaction_records.jurisdiction
+        )
+ SELECT l.election_id,
+    l.jurisdiction,
+    COALESCE(t1.total, (0)::bigint) AS a1a,
+        CASE
+            WHEN ((t1.active > 0) AND (t1.inactive > 0)) THEN 'Both Active AND Inactive'::text
+            WHEN (t1.active > 0) THEN 'Active Only'::text
+            WHEN (t1.inactive > 0) THEN 'Inactive Only'::text
+            ELSE 'N/A'::text
+        END AS a2,
+    COALESCE(t1.active, (0)::bigint) AS a3a,
+    COALESCE(t1.inactive, (0)::bigint) AS a3b,
+    COALESCE(t2.total, (0)::bigint) AS a5a,
+    COALESCE(t2.new, (0)::bigint) AS a5b,
+    COALESCE(t2.duplicate, (0)::bigint) AS a5d,
+    COALESCE(t2.rejected, (0)::bigint) AS a5e,
+    COALESCE(t2.other, (0)::bigint) AS a5h,
+    COALESCE(t2.total, (0)::bigint) AS a5_total,
+    COALESCE(t3.postal, (0)::bigint) AS a6a,
+    COALESCE(t3.office, (0)::bigint) AS a6b,
+    COALESCE(t3.internet, (0)::bigint) AS a6c,
+    COALESCE(t3.motor_vehicle_office, (0)::bigint) AS a6d,
+    COALESCE(t3.nvra_site, (0)::bigint) AS a6e,
+    COALESCE(t3.advocacy_group, (0)::bigint) AS a6i,
+    COALESCE(t3.other, (0)::bigint) AS a6j,
+    COALESCE(t3.total, (0)::bigint) AS a6_total,
+    COALESCE(t4.postal, 'N/A'::text) AS a7a,
+    COALESCE(t4.office, 'N/A'::text) AS a7b,
+    COALESCE(t4.internet, (0)::bigint) AS a7c,
+    COALESCE(t4.motor_vehicle_office, (0)::bigint) AS a7d,
+    COALESCE(t4.nvra_site, (0)::bigint) AS a7e,
+    COALESCE(t4.advocacy_group, (0)::bigint) AS a7i,
+    COALESCE(t4.other, (0)::bigint) AS a7j,
+    COALESCE(t4.total, (0)::bigint) AS a7_total,
+    COALESCE(t5.postal, 'N/A'::text) AS a8a,
+    COALESCE(t5.office, 'N/A'::text) AS a8b,
+    COALESCE(t5.internet, (0)::bigint) AS a8c,
+    COALESCE(t5.motor_vehicle_office, (0)::bigint) AS a8d,
+    COALESCE(t5.nvra_site, (0)::bigint) AS a8e,
+    COALESCE(t5.advocacy_group, (0)::bigint) AS a8i,
+    COALESCE(t5.other, (0)::bigint) AS a8j,
+    COALESCE(t5.total, (0)::bigint) AS a8_total,
+    COALESCE(t6.postal, (0)::bigint) AS a9a,
+    COALESCE(t6.office, (0)::bigint) AS a9b,
+    COALESCE(t6.internet, (0)::bigint) AS a9c,
+    COALESCE(t6.motor_vehicle_office, (0)::bigint) AS a9d,
+    COALESCE(t6.nvra_site, (0)::bigint) AS a9e,
+    COALESCE(t6.advocacy_group, (0)::bigint) AS a9i,
+    COALESCE(t6.other, (0)::bigint) AS a9j,
+    COALESCE(t6.total, (0)::bigint) AS a9_total,
+    COALESCE(t7.total, (0)::bigint) AS a11a,
+    COALESCE(t7.relocation, (0)::bigint) AS a11b,
+    COALESCE(t7.death, (0)::bigint) AS a11c,
+    COALESCE(t7.felony, (0)::bigint) AS a11d,
+    COALESCE(t7.incompetent, (0)::bigint) AS a11f,
+    COALESCE(t7.other, (0)::bigint) AS a11h,
+    COALESCE(t7.total, (0)::bigint) AS a11_total
+   FROM (((((((localities l
+     LEFT JOIN reg_basic_stats_by_locality t1 ON (((l.election_id = t1.election_id) AND ((l.jurisdiction)::text = (t1.jurisdiction)::text))))
+     LEFT JOIN reg_forms_received_by_locality t2 ON (((l.election_id = t2.election_id) AND ((l.jurisdiction)::text = (t2.jurisdiction)::text))))
+     LEFT JOIN total_reg_by_origin t3 ON (((l.election_id = t3.election_id) AND ((l.jurisdiction)::text = (t3.jurisdiction)::text))))
+     LEFT JOIN new_reg_by_origin t4 ON (((l.election_id = t4.election_id) AND ((l.jurisdiction)::text = (t4.jurisdiction)::text))))
+     LEFT JOIN duplicate_reg_by_origin t5 ON (((l.election_id = t5.election_id) AND ((l.jurisdiction)::text = (t5.jurisdiction)::text))))
+     LEFT JOIN invalid_reg_by_origin t6 ON (((l.election_id = t6.election_id) AND ((l.jurisdiction)::text = (t6.jurisdiction)::text))))
+     LEFT JOIN removed_voters t7 ON (((l.election_id = t7.election_id) AND ((l.jurisdiction)::text = (t7.jurisdiction)::text))))
+  ORDER BY l.jurisdiction
+  WITH NO DATA;
+
+
+--
 -- Name: elections; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -513,179 +843,6 @@ UNION ALL
 
 
 --
--- Name: invalid_reg_by_origin; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE MATERIALIZED VIEW invalid_reg_by_origin AS
- WITH registrations AS (
-         SELECT transaction_records.id,
-            transaction_records.log_id,
-            transaction_records.voter_id,
-            transaction_records.recorded_at,
-            transaction_records.action,
-            transaction_records.jurisdiction,
-            transaction_records.form,
-            transaction_records.form_note,
-            transaction_records.leo,
-            transaction_records.notes,
-            transaction_records.comment,
-            transaction_records.created_at,
-            transaction_records.updated_at,
-            transaction_records.election_id,
-            transaction_records.account_id
-           FROM transaction_records
-          WHERE (((transaction_records.action)::text = 'reject'::text) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[])))
-        )
- SELECT registrations.election_id,
-    registrations.jurisdiction,
-    count(*) AS total,
-    count(*) FILTER (WHERE ((registrations.notes)::text = 'personalReceived'::text)) AS office,
-    count(*) FILTER (WHERE ((registrations.notes)::text = 'postalReceived'::text)) AS postal,
-    count(*) FILTER (WHERE (((registrations.notes)::text = 'electronicReceived'::text) OR ((registrations.form_note)::text = ANY ((ARRAY['onlineGeneratedPaperless'::character varying, 'onlineGeneratedPaper'::character varying])::text[])))) AS internet,
-    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAmotorVehicles'::text)) AS motor_vehicle_office,
-    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAother'::text)) AS nvra_site,
-    count(*) FILTER (WHERE ((registrations.form_note)::text = 'thirdParty'::text)) AS advocacy_group,
-    count(*) FILTER (WHERE ((registrations.form_note IS NULL) AND (registrations.notes IS NULL))) AS other
-   FROM registrations
-  GROUP BY registrations.election_id, registrations.jurisdiction
-  WITH NO DATA;
-
-
---
--- Name: new_reg_by_origin; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE MATERIALIZED VIEW new_reg_by_origin AS
- WITH registrations AS (
-         SELECT transaction_records.id,
-            transaction_records.log_id,
-            transaction_records.voter_id,
-            transaction_records.recorded_at,
-            transaction_records.action,
-            transaction_records.jurisdiction,
-            transaction_records.form,
-            transaction_records.form_note,
-            transaction_records.leo,
-            transaction_records.notes,
-            transaction_records.comment,
-            transaction_records.created_at,
-            transaction_records.updated_at,
-            transaction_records.election_id,
-            transaction_records.account_id
-           FROM transaction_records
-          WHERE ((((transaction_records.action)::text = 'approve'::text) AND ((transaction_records.notes)::text = 'acceptNewRequest'::text)) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[])))
-        )
- SELECT registrations.election_id,
-    registrations.jurisdiction,
-    count(*) AS total,
-    'N/A'::text AS office,
-    'N/A'::text AS postal,
-    count(*) FILTER (WHERE ((registrations.form_note)::text = ANY ((ARRAY['onlineGeneratedPaperless'::character varying, 'onlineGeneratedPaper'::character varying])::text[]))) AS internet,
-    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAmotorVehicles'::text)) AS motor_vehicle_office,
-    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAother'::text)) AS nvra_site,
-    count(*) FILTER (WHERE ((registrations.form_note)::text = 'thirdParty'::text)) AS advocacy_group,
-    count(*) FILTER (WHERE ((registrations.form_note IS NULL) AND (registrations.notes IS NULL))) AS other
-   FROM registrations
-  GROUP BY registrations.election_id, registrations.jurisdiction
-  WITH NO DATA;
-
-
---
--- Name: reg_basic_stats_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE MATERIALIZED VIEW reg_basic_stats_by_locality AS
- SELECT demog_records.election_id,
-    demog_records.jurisdiction,
-    count(DISTINCT demog_records.voter_id) AS total,
-    count(DISTINCT demog_records.voter_id) FILTER (WHERE ((demog_records.reg_status)::text = 'Active'::text)) AS active,
-    count(DISTINCT demog_records.voter_id) FILTER (WHERE ((demog_records.reg_status)::text = 'Inactive'::text)) AS inactive
-   FROM demog_records
-  GROUP BY demog_records.election_id, demog_records.jurisdiction
-  WITH NO DATA;
-
-
---
--- Name: reg_forms_received_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE MATERIALIZED VIEW reg_forms_received_by_locality AS
- WITH reg_forms AS (
-         SELECT transaction_records.id,
-            transaction_records.log_id,
-            transaction_records.voter_id,
-            transaction_records.recorded_at,
-            transaction_records.action,
-            transaction_records.jurisdiction,
-            transaction_records.form,
-            transaction_records.form_note,
-            transaction_records.leo,
-            transaction_records.notes,
-            transaction_records.comment,
-            transaction_records.created_at,
-            transaction_records.updated_at,
-            transaction_records.election_id,
-            transaction_records.account_id
-           FROM transaction_records
-          WHERE ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[]))
-        ), reg_forms_received AS (
-         SELECT reg_forms.id,
-            reg_forms.log_id,
-            reg_forms.voter_id,
-            reg_forms.recorded_at,
-            reg_forms.action,
-            reg_forms.jurisdiction,
-            reg_forms.form,
-            reg_forms.form_note,
-            reg_forms.leo,
-            reg_forms.notes,
-            reg_forms.comment,
-            reg_forms.created_at,
-            reg_forms.updated_at,
-            reg_forms.election_id,
-            reg_forms.account_id
-           FROM reg_forms
-          WHERE ((reg_forms.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[]))
-        ), reg_forms_other_stats AS (
-         SELECT reg_forms.election_id,
-            reg_forms.jurisdiction,
-            count(*) AS other
-           FROM reg_forms
-          WHERE (((reg_forms.action)::text <> ALL ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND (reg_forms.recorded_at > (date_trunc('year'::text, now()) - '1 year'::interval)))
-          GROUP BY reg_forms.election_id, reg_forms.jurisdiction
-        ), reg_changes_received AS (
-         SELECT transaction_records.election_id,
-            transaction_records.jurisdiction,
-            count(*) AS changes
-           FROM transaction_records
-          WHERE ((((transaction_records.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[]))) AND (transaction_records.recorded_at > (date_trunc('year'::text, now()) - '1 year'::interval)))
-          GROUP BY transaction_records.election_id, transaction_records.jurisdiction
-        ), reg_forms_received_part_stats AS (
-         SELECT reg_forms_received.election_id,
-            reg_forms_received.jurisdiction,
-            count(*) AS total,
-            count(*) FILTER (WHERE ((reg_forms_received.notes)::text = 'acceptNewRequest'::text)) AS new,
-            count(*) FILTER (WHERE ((reg_forms_received.notes)::text = ANY ((ARRAY['acceptDuplicate'::character varying, 'cancelDuplicate'::character varying])::text[]))) AS duplicate,
-            count(*) FILTER (WHERE ((reg_forms_received.notes)::text ~~ 'reject%'::text)) AS rejected
-           FROM reg_forms_received
-          WHERE (reg_forms_received.recorded_at > (date_trunc('year'::text, now()) - '1 year'::interval))
-          GROUP BY reg_forms_received.election_id, reg_forms_received.jurisdiction
-        )
- SELECT s.election_id,
-    s.jurisdiction,
-    s.total,
-    s.new,
-    s.duplicate,
-    s.rejected,
-    COALESCE(c.changes, (0)::bigint) AS record_changes,
-    COALESCE(o.other, (0)::bigint) AS other
-   FROM ((reg_forms_received_part_stats s
-     LEFT JOIN reg_changes_received c ON (((s.election_id = c.election_id) AND ((s.jurisdiction)::text = (c.jurisdiction)::text))))
-     LEFT JOIN reg_forms_other_stats o ON (((s.election_id = o.election_id) AND ((s.jurisdiction)::text = (o.jurisdiction)::text))))
-  WITH NO DATA;
-
-
---
 -- Name: reg_rejection_reasons_by_locality; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -765,45 +922,6 @@ ALTER SEQUENCE registration_requests_id_seq OWNED BY registration_requests.id;
 
 
 --
--- Name: removed_voters; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE MATERIALIZED VIEW removed_voters AS
- WITH cancellations AS (
-         SELECT transaction_records.id,
-            transaction_records.log_id,
-            transaction_records.voter_id,
-            transaction_records.recorded_at,
-            transaction_records.action,
-            transaction_records.jurisdiction,
-            transaction_records.form,
-            transaction_records.form_note,
-            transaction_records.leo,
-            transaction_records.notes,
-            transaction_records.comment,
-            transaction_records.created_at,
-            transaction_records.updated_at,
-            transaction_records.election_id,
-            transaction_records.account_id
-           FROM transaction_records
-          WHERE ((transaction_records.action)::text = 'cancelVoterRecord'::text)
-        )
- SELECT cancellations.election_id,
-    cancellations.jurisdiction,
-    count(*) AS total,
-    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelTransferOut'::text)) AS relocation,
-    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelDeceased'::text)) AS death,
-    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelFelonyConviction'::text)) AS felony,
-    'N/A'::text AS no_response,
-    count(*) FILTER (WHERE ((cancellations.notes)::text = 'cancelIncapacitated'::text)) AS incompetent,
-    'N/A'::text AS by_voter_request,
-    count(*) FILTER (WHERE ((cancellations.notes)::text = ANY ((ARRAY['cancelUnderage'::character varying, 'cancelCitizenship'::character varying, 'cancelOther'::character varying])::text[]))) AS other
-   FROM cancellations
-  GROUP BY cancellations.election_id, cancellations.jurisdiction
-  WITH NO DATA;
-
-
---
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -872,45 +990,6 @@ CREATE SEQUENCE tenet_settings_id_seq
 --
 
 ALTER SEQUENCE tenet_settings_id_seq OWNED BY tenet_settings.id;
-
-
---
--- Name: total_reg_by_origin; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE MATERIALIZED VIEW total_reg_by_origin AS
- WITH registrations AS (
-         SELECT transaction_records.id,
-            transaction_records.log_id,
-            transaction_records.voter_id,
-            transaction_records.recorded_at,
-            transaction_records.action,
-            transaction_records.jurisdiction,
-            transaction_records.form,
-            transaction_records.form_note,
-            transaction_records.leo,
-            transaction_records.notes,
-            transaction_records.comment,
-            transaction_records.created_at,
-            transaction_records.updated_at,
-            transaction_records.election_id,
-            transaction_records.account_id
-           FROM transaction_records
-          WHERE (((transaction_records.action)::text = ANY ((ARRAY['approve'::character varying, 'reject'::character varying])::text[])) AND ((transaction_records.form)::text = ANY ((ARRAY['VoterRegistration'::character varying, 'VoterRegistrationAbsenteeRequest'::character varying, 'VoterRecordUpdate'::character varying, 'VoterRecordUpdateAbsenteeRequest'::character varying])::text[])))
-        )
- SELECT registrations.election_id,
-    registrations.jurisdiction,
-    count(*) AS total,
-    count(*) FILTER (WHERE ((registrations.notes)::text = 'personalReceived'::text)) AS office,
-    count(*) FILTER (WHERE ((registrations.notes)::text = 'postalReceived'::text)) AS postal,
-    count(*) FILTER (WHERE (((registrations.notes)::text = 'electronicReceived'::text) OR ((registrations.form_note)::text = ANY ((ARRAY['onlineGeneratedPaperless'::character varying, 'onlineGeneratedPaper'::character varying])::text[])))) AS internet,
-    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAmotorVehicles'::text)) AS motor_vehicle_office,
-    count(*) FILTER (WHERE ((registrations.form_note)::text = 'NVRAother'::text)) AS nvra_site,
-    count(*) FILTER (WHERE ((registrations.form_note)::text = 'thirdParty'::text)) AS advocacy_group,
-    count(*) FILTER (WHERE ((registrations.form_note IS NULL) AND (registrations.notes IS NULL))) AS other
-   FROM registrations
-  GROUP BY registrations.election_id, registrations.jurisdiction
-  WITH NO DATA;
 
 
 --
@@ -1750,4 +1829,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150807113542');
 INSERT INTO schema_migrations (version) VALUES ('20150807113548');
 
 INSERT INTO schema_migrations (version) VALUES ('20150812082054');
+
+INSERT INTO schema_migrations (version) VALUES ('20150817124811');
 
