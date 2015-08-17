@@ -1,4 +1,4 @@
-eavs:
+en-EAVS:
   layouts:
     admin:
       header:
@@ -15,8 +15,9 @@ eavs:
         banner_subtext: A strong authentication and access control framework for multi-tenant managed services. (To override the defaults, create config/locales/layouts.en.yml in your app and use the copy of this file as the base.)
 
       footer:
-        para1: "Satori created by <a href='http://trustthevote.org'>TrustTheVote Project</a>"
-        para2: " and provided by <a href='http//osetfoundation.org'>Open Source Election Technology (OSET) Foundation</a>"
+        para: >
+          <a href='/locale/satori'>Satori</a> created by <a href='http://trustthevote.org'>TrustTheVote Project</a> and provided by <a href='http//osetfoundation.org'>Open Source Election Technology (OSET) Foundation</a><br/>
+          EAVSweb powered by Satori: developed in co-operation with U.S. Election Assistance Commission
         links:
           number: 3
           separator: " | "

@@ -1,0 +1,11 @@
+en-EAVS:
+  version: EAVS
+  app_title: EAVS
+
+  no_records: There are no records yet.
+  sure_to_delete: Are you sure to delete?
+  unauthenticated: Please log in to access this area.
+
+  notifications:
+    new_registration_request:
+      subject: New registration request

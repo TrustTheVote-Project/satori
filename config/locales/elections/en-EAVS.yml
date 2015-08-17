@@ -1,4 +1,4 @@
-eavs:
+en-EAVS:
   elections:
     show:
       title: "Election Administration and Voting Survey for:<br/>%{election}"

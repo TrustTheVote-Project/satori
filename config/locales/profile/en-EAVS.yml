@@ -1,4 +1,4 @@
-eavs:
+en-EAVS:
   errors:
     messages:
       strong: "is too weak. Need at least 8 characters: lowercase, uppercase, digits, no username"

@@ -1,4 +1,4 @@
-eavs:
+en-EAVS:
   date:
     abbr_day_names:
     - Sun
@@ -202,14 +202,3 @@ eavs:
       long: "%B %d, %Y %H:%M"
       short: "%d %b %H:%M"
     pm: pm
-
-  version: EAVS
-  app_title: EAVS
-
-  no_records: There are no records yet.
-  sure_to_delete: Are you sure to delete?
-  unauthenticated: Please log in to access this area.
-
-  notifications:
-    new_registration_request:
-      subject: New registration request

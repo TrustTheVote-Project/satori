@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   root "tenet/pages#landing"
 
-  get "/dashboard" => "user_dashboard#show", as: 'dashboard'
+  get "/dashboard"      => "user_dashboard#show", as: 'dashboard'
+  get "/locale/satori"  => "locale#satori", as: 'satori_locale'
+  get "/locale/eavs"    => "locale#eavs", as: 'eavs_locale'
 
   resources :elections do
     member do
