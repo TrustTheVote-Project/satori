@@ -22,7 +22,7 @@ class TransactionRecord < ActiveRecord::Base
     self.form         = rec.form
     self.form_note    = rec.form_note
     self.leo          = rec.leo
-    self.notes        = rec.notes
+    self.notes        = rec.notes && rec.notes.first # there can be several notes, but we use only one as there are no semantics
     self.comment      = rec.comment
   end
 
