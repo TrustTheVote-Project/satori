@@ -6,6 +6,7 @@
 .row
   .col-sm-12
     %p #{@election.voter_start_on.strftime("%d %B %Y")} to #{@election.voter_end_on.strftime("%d %B %Y")} in #{current_user.account.state.name}
+    %p= @summary || @title
     = render partial: 'report_table', object: @report
 
 = content_for :scripts do

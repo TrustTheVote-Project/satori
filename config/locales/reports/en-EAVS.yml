@@ -1,0 +1,4 @@
+en:
+  reports:
+    eavs_part_a:
+      summary: This report provides a table for each part of section of the 2012 EAVS survey instrument. The CSV download is a spreadsheet that matches the format of part A of the EAC survey.
