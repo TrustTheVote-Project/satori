@@ -9,23 +9,7 @@
       .col-xs-6.text-right
         = link_to t('.new_election'), :new_election, class: 'btn btn-xs btn-primary'
 
-    .row
-      .col-sm-12.no-pad
-        %table.table.table-striped
-          - if @elections.empty?
-            %tr
-              %td= t '.none'
-          - else
-            - @elections.each do |e|
-              %tr
-                %td
-                  Election Name: #{link_to e.name, e}<br/>
-                  Election Date: #{e.held_on.try(:strftime, "%d %B %Y")}<br/>
-                  Start/End Dates for Reporting: #{e.voter_start_on.try(:strftime, "%d %B %Y")} - #{e.voter_end_on.try(:strftime, "%d %B %Y")}<br/>
-                  Owner: #{e.owner.try(:full_name) || 'Unknown'}
-                %td.text-right
-                  = link_to "Select", e, class: 'btn btn-xs btn-info'
-                  -# = link_to "Delete", e, method: 'delete', data: { confirm: 'Delete this election?' }, class: 'btn btn-xs btn-danger'
+    = react_component "ElectionsList"
 
     = section_row t('.your_team'), 'your-team'
     .row.section.collapse#your-team
