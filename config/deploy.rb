@@ -28,8 +28,20 @@ set :default_env, { path: "~/.rbenv/shims:$PATH" }
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
-namespace :deploy do
+set :sidekiq_service_name, 'sidekiq'
 
+namespace :sidekiq do
+  namespace :monit do
+    desc "Restart sidekiq"
+    task :restart do
+      on roles(:app) do
+        execute "sudo /usr/bin/monit restart #{fetch(:sidekiq_service_name)}"
+      end
+    end
+  end
+end
+
+namespace :deploy do
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
@@ -48,10 +60,22 @@ namespace :deploy do
     end
   end
 
+  after 'deploy:publishing', 'sidekiq:monit:restart'
+end
+
+namespace :db do
+  task :seed do
+    on roles(:app) do
+      within current_path do
+        with rails_env: :production do
+          execute :rake, 'db:seed'
+        end
+      end
+    end
+  end
 end
 
 namespace :deter do
-
   task :seed do
     on roles(:app) do
       within current_path do
@@ -63,5 +87,4 @@ namespace :deter do
       end
     end
   end
-
 end
