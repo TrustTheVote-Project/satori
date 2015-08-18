@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get "/dashboard"      => "user_dashboard#show", as: 'dashboard'
   get "/locale/satori"  => "locale#satori", as: 'satori_locale'
   get "/locale/eavs"    => "locale#eavs", as: 'eavs_locale'
+  get "/about"          => "pages#about", as: 'about_page'
 
   resources :elections do
     member do
@@ -24,6 +25,7 @@ Rails.application.routes.draw do
     get '/reports/registration_rejection_reasons_by_locality' => 'reports#registration_rejection_reasons_by_locality', as: 'registration_rejection_reasons_by_locality_report'
     get '/reports/ballot_rejection_reasons_by_locality' => 'reports#ballot_rejection_reasons_by_locality', as: 'ballot_rejection_reasons_by_locality_report'
 
+    get '/reports/advanced'    => 'reports#advanced', as: 'advanced_report'
     get '/reports/eavs_part_a' => 'reports#eavs_part_a', as: 'eavs_part_a_report'
   end
 

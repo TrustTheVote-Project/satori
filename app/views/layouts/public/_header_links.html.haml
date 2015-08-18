@@ -1,4 +1,48 @@
 - if logged_in?
+  %ul.nav.navbar-nav
+    %li= link_to "Dashboard", :dashboard
+    %li.dropbown
+      = link_to '#', class: 'dropdown-toggle', data: { toggle: 'dropdown' } do
+        About <span class="caret"/>
+      %ul.dropdown-menu
+        %li= link_to "Satori", :about_page
+        %li= link_to "Election Data", :about_page
+        %li= link_to "Metrics", :about_page
+        %li= link_to "EAVS", :about_page
+    %li.dropbown
+      = link_to '#', class: 'dropdown-toggle', data: { toggle: 'dropdown' } do
+        Elections <span class="caret"/>
+      %ul.dropdown-menu
+        %li= link_to "View Elections", :dashboard
+        %li= link_to "Create New Election", :new_election
+
+    - if @election
+      %li.dropbown
+        = link_to '#', class: 'dropdown-toggle', data: { toggle: 'dropdown' } do
+          Reporting <span class="caret"/>
+        %ul.dropdown-menu
+          %li= link_to "Administration Data Metrics", "#"
+          %li= link_to "Demographical Data Metrics", "#"
+          %li= link_to "Combined Metrics", "#"
+          %li= link_to "About Metrics", :about_page
+          %li.divider{ role: 'separator' }
+          %li= link_to "Events by Locality", [ @election, :events_by_locality_report ]
+          %li= link_to "Events by Locality by Demog: UOCAVA", [ @election, :events_by_locality_by_uocava_report ]
+          %li= link_to "Events by Locality by Demog: Gender", [ @election, :events_by_locality_by_gender_report ]
+          %li= link_to "Basic Voter Demographics by Locality", [ @election, :voter_demographics_by_locality_report ]
+          %li= link_to "Voter Age Demographics by Locality: Year of Birth", [ @election, :voter_age_demographics_by_locality_report ]
+          %li= link_to "Registration Cancellation Reasons by Locality", [ @election, :cancellation_reasons_by_locality_report ]
+          %li= link_to "Registration Rejection Reasons by Locality", [ @election, :registration_rejection_reasons_by_locality_report ]
+          %li= link_to "Ballot Rejection Reasons by Locality", [ @election, :ballot_rejection_reasons_by_locality_report ]
+          %li= link_to "About Reporting", :about_page
+          %li.divider{ role: 'separator' }
+          %li= link_to "EAVS Survey, Part A", [ @election, :eavs_part_a_report ]
+          - ( "B" .. "F" ).each do |l|
+            %li= link_to "EAVS Survey, Part #{l}", '#'
+          %li= link_to "About EAVS Support", :about_page
+          %li.divider{ role: 'separator' }
+          %li= link_to "Advanced Reporting", [ @election, :advanced_report ]
+
   %ul.nav.navbar-nav.navbar-right
     - if group_admin?
       %li= link_to "Users", :group_admin_users
