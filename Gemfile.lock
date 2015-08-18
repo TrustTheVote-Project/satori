@@ -18,7 +18,7 @@ GIT
 
 GIT
   remote: https://github.com/trustthevote/Tenet-Framework.git
-  revision: 563565510fa9a4f28aac1659492ccb7221a3ccef
+  revision: 2abb3133f0ecf2b75b1db8d933f5f456d433a78f
   branch: rails-4-2-3
   specs:
     tenet (0.0.1)
@@ -214,7 +214,7 @@ GEM
     listen (3.0.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
-    loofah (2.0.2)
+    loofah (2.0.3)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.9)
     mail (2.6.3)

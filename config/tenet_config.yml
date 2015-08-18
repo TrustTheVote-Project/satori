@@ -1,6 +1,9 @@
 # Name of Unix user for otp
 otp_user: otp
 
+# enable group admins to use passwords
+group_admins_use_passwords: true
+
 admin:
   # user id of admin-admin
   login: admin
