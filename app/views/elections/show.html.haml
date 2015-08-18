@@ -36,8 +36,8 @@
   .col-sm-4
     %h4 Basic Reports
     %p= link_to "Events by Locality", [ @election, :events_by_locality_report ]
-    %p= link_to "Events by Locality by Demog: UOCAVA", [ @election, :events_by_locality_by_uocava_report ]
-    %p= link_to "Events by Locality by Demog: Gender", [ @election, :events_by_locality_by_gender_report ]
+    %p= link_to "Events by Locality by Voter Status: UOCAVA", [ @election, :events_by_locality_by_uocava_report ]
+    %p= link_to "Events by Locality by Voter Gender", [ @election, :events_by_locality_by_gender_report ]
     %p= link_to "Basic Voter Demographics by Locality", [ @election, :voter_demographics_by_locality_report ]
     %p= link_to "Voter Age Demographics by Locality: Year of Birth", [ @election, :voter_age_demographics_by_locality_report ]
     %p= link_to "Registration Cancellation Reasons by Locality", [ @election, :cancellation_reasons_by_locality_report ]
