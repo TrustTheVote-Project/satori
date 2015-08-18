@@ -87,9 +87,17 @@ ElectionDataTable = React.createClass
 
   render: ->
     `<div>
-      <StatusLine data={this.props.data}/>
-      <Buttons data={this.props.data}/>
-      <Table data={this.props.data}/>
+      <div className='row'>
+        <div className='col-xs-12'>
+          <StatusLine data={this.props.data}/>
+          <Buttons data={this.props.data}/>
+        </div>
+      </div>
+      <div className='row'>
+        <div className='col-xs-12 no-pad'>
+          <Table data={this.props.data}/>
+        </div>
+      </div>
     </div>`
 
 
