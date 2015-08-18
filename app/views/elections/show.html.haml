@@ -27,7 +27,14 @@
 
 = section_row "Reports", 'reports', state: 'always_open'
 .row.section#reports
-  .col-sm-12
+  .col-sm-4
+    %h4 Metrics
+    %p= link_to "Administration Data Metrics", "#"
+    %p= link_to "Demographical Data Metrics", "#"
+    %p= link_to "Combined Metrics", "#"
+
+  .col-sm-4
+    %h4 Basic Reports
     %p= link_to "Events by Locality", [ @election, :events_by_locality_report ]
     %p= link_to "Events by Locality by Demog: UOCAVA", [ @election, :events_by_locality_by_uocava_report ]
     %p= link_to "Events by Locality by Demog: Gender", [ @election, :events_by_locality_by_gender_report ]
@@ -36,4 +43,9 @@
     %p= link_to "Registration Cancellation Reasons by Locality", [ @election, :cancellation_reasons_by_locality_report ]
     %p= link_to "Registration Rejection Reasons by Locality", [ @election, :registration_rejection_reasons_by_locality_report ]
     %p= link_to "Ballot Rejection Reasons by Locality", [ @election, :ballot_rejection_reasons_by_locality_report ]
-    %p= link_to "EAVS Part A", [ @election, :eavs_part_a_report ]
+
+  .col-sm-4
+    %h4 EAVS Survey Reports
+    %p= link_to "EAVS Survey, Part A", [ @election, :eavs_part_a_report ]
+    - ( "B" .. "F" ).each do |l|
+      %p= link_to "EAVS Survey, Part #{l}", '#'
