@@ -140,7 +140,7 @@ Table = React.createClass
     data = @props.data
 
     rows = (data.rows || []).map (r) ->
-      `<Row key={r.id} row={r}/>`
+      `<Row key={r.id} row={r} locked={data.locked}/>`
 
     uploads = (data.uploads || []).map (u) ->
       `<UploadRow key={u.id} cols={2} upload={u}/>`
@@ -160,6 +160,7 @@ Table = React.createClass
 Row = React.createClass
   render: ->
     l = @props.row
+    locked = @props.locked
 
     if l.type == 'vtl'
       dataType = 'Voter Administration'
@@ -174,6 +175,13 @@ Row = React.createClass
         `<PropertyRow key='tr' label="Total Records" value={l.records_count} />`
       ]
 
+    if locked
+      deleteBtn = null
+    else
+      deleteBtn = `<a href={l.url} data-method='delete' data-confirm='Delete this data file?' className='btn btn-xs btn-danger'>
+        Delete
+      </a>`
+
     `<tr>
       <td className='col-sm-12'>
         <PropertyRow label="Data Type" value={dataType} />
@@ -183,10 +191,8 @@ Row = React.createClass
         <PropertyRow label="Filename" value={l.filename} />
         {customRows}
       </td>
-      <td className='text-center'>
-        <a href={l.url} data-method='delete' data-confirm='Delete this data file?' className='btn btn-xs btn-danger'>
-          <div className='glyphicon glyphicon-remove'/>
-        </a>
+      <td className='text-right'>
+        {deleteBtn}
       </td>
     </tr>`
 
