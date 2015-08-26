@@ -1,5 +1,5 @@
-body {
-  background-color: #e8e8e8;
+body, body#login .sheet {
+  background: image-url('demo.png') #e8e8e8 0 0;
 }
 
 #wrap {
@@ -13,7 +13,7 @@ body {
 
 .sheet {
   box-shadow: 0 0 20px rgba(0,0,0,.1);
-  background: image-url('demo.png') #fff 0 0;
+  background-color: #fff;
   padding-bottom: 20px;
   overflow: hidden;
 }
