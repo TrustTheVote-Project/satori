@@ -140,7 +140,7 @@ Buttons = React.createClass
       <p className='text-right'>
         <a href={gon.new_vtl_url} className='btn btn-default'>Upload Voter Administration Log Data</a>
         <span>&nbsp;</span>
-        <a href={gon.new_demog_file_url} className='btn btn-default'>Upload Voter Demographic Data</a>
+        <a href={gon.new_demog_url} className='btn btn-default'>Upload Voter Demographic Data</a>
         <span>&nbsp;</span>
         <a onClick={actLockData} disabled={lockDisabled} data-confirm='Are you sure to lock?' className='btn btn-default'>Lock Data</a>
       </p>
