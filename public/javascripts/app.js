@@ -307,7 +307,7 @@ Buttons = React.createClass({
         "href": gon.new_vtl_url,
         "className": 'btn btn-default'
       }, "Upload Voter Administration Log Data"), React.createElement("span", null, "\u00a0"), React.createElement("a", {
-        "href": gon.new_demog_file_url,
+        "href": gon.new_demog_url,
         "className": 'btn btn-default'
       }, "Upload Voter Demographic Data"), React.createElement("span", null, "\u00a0"), React.createElement("a", {
         "onClick": actLockData,
