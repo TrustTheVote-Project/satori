@@ -4,7 +4,7 @@ class UserDashboardController < BaseController
 
   # user dashboard
   def show
-    @elections = Election.all
+    @elections = Election.where(account: current_account).all
     gon.elections = @elections.map do |e|
       { id:             e.id,
         name:           e.name,
