@@ -49,3 +49,7 @@
     %p= link_to "EAVS Survey, Part A", [ @election, :eavs_part_a_report ]
     - ( "B" .. "F" ).each do |l|
       %p= link_to "EAVS Survey, Part #{l}", '#'
+
+- content_for :scripts do
+  = javascript_tag do
+    require('component/election_data_section');

@@ -5,7 +5,8 @@
     %meta{:content => "width=device-width,initial-scale=1,maximum-scale=1.0,user-scalable=no", :name => "viewport"}
 
     = stylesheet_link_tag "tenet/application", :media => "all"
-    = stylesheet_link_tag "application", :media => "all"
+    %link{ rel: 'stylesheet', media: 'all', href: '/stylesheets/lib.css' }
+    %link{ rel: 'stylesheet', media: 'all', href: '/stylesheets/app.css' }
     = csrf_meta_tags
 
   %body{ id: @page_id }
@@ -29,4 +30,6 @@
     = include_gon
     = javascript_include_tag "tenet/application"
     = javascript_include_tag "application"
+    = javascript_include_tag "/javascripts/lib.js"
+    = javascript_include_tag "/javascripts/app.js"
     = yield :scripts

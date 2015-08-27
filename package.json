@@ -1,0 +1,21 @@
+{
+  "name": "your-app",
+  "description": "Description",
+  "author": "Your Name",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "start": "brunch watch --server"
+  },
+  "dependencies": {
+    "cjsx-coffee-brunch": "0.0.3",
+    "clean-css-brunch": "^1.7.2",
+    "coffee-script-brunch": "^1.8.2",
+    "css-brunch": ">= 1.0 < 1.9",
+    "javascript-brunch": ">= 1.0 < 1.9",
+    "sass-brunch": "^1.8.11"
+  }
+}

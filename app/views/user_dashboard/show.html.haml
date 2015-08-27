@@ -18,3 +18,7 @@
     = section_row t('.recent_activity'), 'recent-activity'
     .row.section.collapse#recent-activity
       %p Lorem ipsum
+
+- content_for :scripts do
+  = javascript_tag do
+    require('component/elections_list');

@@ -1,0 +1,89 @@
+body, body#login .sheet {
+  background: url('/images/demo.png') #e8e8e8 0 0;
+}
+
+
+#wrap {
+  overflow: hidden;
+  margin-bottom: -130px;
+}
+
+#push {
+  height: 90px;
+}
+
+.sheet {
+  box-shadow: 0 0 20px rgba(0,0,0,.1);
+  background-color: #fff;
+  padding-bottom: 20px;
+  overflow: hidden;
+}
+
+.block {
+  h3 {
+    margin-top: 0;
+  }
+}
+
+.navbar-default .navbar-brand span {
+  font-size: 115%;
+}
+
+.section-row {
+  background-color: #f4f4f4;
+  margin-bottom: 5px;
+
+  h4, button, .btn {
+    margin-top: 10px;
+  }
+}
+
+.panel.errors ul {
+  margin-bottom: 0px;
+}
+
+.section table.table-padded {
+  th, td {
+    padding-left: 8px !important;
+  }
+}
+
+table#report {
+  th, td { white-space: nowrap; }
+}
+
+$em-base: #f4f4f4;
+$em-step: #0a0a0a;
+$odd-shade: #050505;
+.dataTables_wrapper, table.report {
+  th {
+    vertical-align: bottom;
+  }
+
+  .em1 { background-color: $em-base; }
+  .em2 { background-color: $em-base - $em-step; }
+  .em3 { background-color: $em-base - $em-step * 2; }
+
+  .odd {
+    .em1 { background-color: $em-base - $odd-shade; }
+    .em2 { background-color: $em-base - $odd-shade - $em-step; }
+    .em3 { background-color: $em-base - $odd-shade - $em-step * 2; }
+  }
+}
+
+.no-pad {
+  padding-left: 0;
+  padding-right: 0;
+
+  tr > td:first-child {
+    padding-left: 15px !important;
+  }
+
+  tr > td:last-child {
+    padding-right: 15px !important;
+  }
+}
+
+.smaller {
+  font-size: 90%;
+}

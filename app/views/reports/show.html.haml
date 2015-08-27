@@ -10,4 +10,5 @@
     = render partial: 'report_table', object: @report
 
 = content_for :scripts do
-  = javascript_include_tag "reports"
+  = javascript_tag do
+    require('reports');
