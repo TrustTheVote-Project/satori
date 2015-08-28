@@ -9,8 +9,8 @@ class ReportsControllerTest < ActionController::TestCase
     Reports.refresh
   }
 
-  test 'events_by_county' do
-    get :events_by_county, election_id: election.id
+  test 'events_by_locality' do
+    get :events_by_locality, election_id: election.id
     assert_not_nil assigns(:report)
   end
 

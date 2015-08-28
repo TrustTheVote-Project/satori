@@ -2,3 +2,6 @@ one:
   election: one
   account:  office
   filename: sample-demog.xml
+  origin:   fixtures
+  hash_alg: SHA1
+  create_date: 2014-07-21T08:54:03.690
