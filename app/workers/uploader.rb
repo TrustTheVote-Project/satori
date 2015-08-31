@@ -1,5 +1,8 @@
 class Uploader
 
+  MAX_BATCH_RECORDS = 1000
+  MAX_RECORDS       = 10_000_000
+
   include Sidekiq::Worker
 
   def perform(job_id, uploader_id)
@@ -33,6 +36,10 @@ class Uploader
   rescue => e
     job.abort!(e.message)
     raise e
+  ensure
+    if job.url !~ /^http/
+      FileUtils.rm(job.url)
+    end
   end
 
   def upload_demog(job, uploader_id)
@@ -62,12 +69,19 @@ class Uploader
 
   # Log parsing handler
   class VTLParseHandler
+
+    COLS = [ :account_id, :election_id, :log_id, :voter_id, :recorded_at, :action, :jurisdiction, :form, :form_note, :leo, :notes, :comment ]
+
     attr_reader :log
 
     def initialize(election, filename, uploader_id)
-      @election = election
-      @filename = filename
-      @uploader_id = uploader_id
+      @election      = election
+      @filename      = filename
+      @uploader_id   = uploader_id
+
+      @records       = []
+      @batch_records = 0
+      @max_records   = MAX_RECORDS
     end
 
     def parsed_header(header)
@@ -86,16 +100,26 @@ class Uploader
       end
     end
 
+    def flush_batch
+      TransactionRecord.import COLS, @records, validate: false
+      @records.clear
+      @batch_records = 0
+    end
+
     def parsed_record(record)
-      rec = @log.records.build
-      rec.set_attributes_from_vtl(record)
-      if rec.valid?
-        rec.save
-      else
-        # DEBUG skip missing action nodes
-        return unless rec.errors[:action].blank?
-        raise "Failed to save record: #{rec.errors.full_messages.join(', ')}"
+      flush_batch if @batch_records == MAX_BATCH_RECORDS
+
+      if @max_records == 0
+        flush_batch if @batch_records > 0
+        raise "Max records"
       end
+
+      @batch_records += 1
+      @max_records -= 1
+
+      rec = [ @election.account_id, @election.id, @log.id, record.voter_id, record.date, record.action, record.jurisdiction, record.form,
+              record.form_note, record.leo, record.notes.try(:first), record.comment ]
+      @records << rec
     end
 
     def error(invalid_record)
@@ -109,12 +133,20 @@ class Uploader
 
   # Log parsing handler
   class DemogParseHandler
+    COLS = [ :account_id, :election_id, :demog_file_id, :voter_id, :jurisdiction, :reg_date, :year_of_birth, :reg_status, :gender, :race,
+             :political_party_name, :overseas, :military, :protected, :disabled, :absentee_ongoing,
+             :absentee_in_this_election, :precinct_split_id, :zip_code ]
+
     attr_reader :file
 
     def initialize(election, filename, uploader_id)
-      @election = election
-      @filename = filename
-      @uploader_id = uploader_id
+      @election      = election
+      @filename      = filename
+      @uploader_id   = uploader_id
+
+      @records       = []
+      @batch_records = 0
+      @max_records   = MAX_RECORDS
     end
 
     def parsed_header(header)
@@ -133,15 +165,45 @@ class Uploader
       end
     end
 
+    def flush_batch
+      DemogRecord.import COLS, @records, validate: false
+      @records.clear
+      @batch_records = 0
+    end
+
     def parsed_record(record)
-      rec = @file.records.build
-      rec.set_attributes_from_demog(record)
-      rec.election_id = @file.election_id
-      if rec.valid?
-        rec.save
-      else
-        raise "Failed to save record: #{rec.errors.full_messages.join(', ')}"
+      flush_batch if @batch_records == MAX_BATCH_RECORDS
+
+      if @max_records == 0
+        flush_batch if @batch_records > 0
+        raise "Max records"
       end
+
+      @batch_records += 1
+      @max_records -= 1
+
+      rec = [
+        @election.account_id,
+        @election.id,
+        @file.id,
+        record.voter_id,
+        record.jurisdiction,
+        record.reg_date,
+        record.year_of_birth,
+        record.reg_status,
+        record.gender,
+        record.race,
+        record.political_party_name,
+        record.overseas,
+        record.military,
+        record.protected,
+        record.disabled,
+        record.absentee_ongoing,
+        record.absentee_in_this_election,
+        record.precinct_split_id,
+        record.zip_code ]
+
+      @records << rec
     end
 
     def error(invalid_record)

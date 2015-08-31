@@ -14,7 +14,12 @@ class TransactionLogsController < BaseController
   def create
     file = params[:upload][:file]
 
-    job = @election.upload_jobs.build(url: file.path, filename: file.original_filename, kind: UploadJob::VTL, state: UploadJob::PENDING)
+    path = "#{Rails.root}/tmp/uploads"
+    dst  = "#{path}/#{file.original_filename}"
+    FileUtils.mkdir_p(path)
+    FileUtils.mv(file.path, dst)
+
+    job = @election.upload_jobs.build(url: dst, filename: file.original_filename, kind: UploadJob::VTL, state: UploadJob::PENDING)
 
     if job.save
       Uploader.perform_async(job.id, current_user.id)
