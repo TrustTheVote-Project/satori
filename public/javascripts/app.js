@@ -287,7 +287,7 @@ StatusLine = React.createClass({
 
 Buttons = React.createClass({
   render: function() {
-    var data, lockDisabled, noDemog, noVTL;
+    var data, lockDisabled, noDemog, noVTL, uploadDemogButton, uploadVTLButton;
     data = this.props.data;
     if (data.locked) {
       return React.createElement("p", {
@@ -301,15 +301,21 @@ Buttons = React.createClass({
       noDemog = !data.has_demog;
       noVTL = !data.has_vtl;
       lockDisabled = noDemog || noVTL;
+      if (noVTL) {
+        uploadVTLButton = React.createElement("span", null, React.createElement("a", {
+          "href": gon.new_vtl_url,
+          "className": 'btn btn-default'
+        }, "Upload Voter Administration Log Data"), React.createElement("span", null, "\u00a0"));
+      }
+      if (noDemog) {
+        uploadDemogButton = React.createElement("span", null, React.createElement("a", {
+          "href": gon.new_demog_url,
+          "className": 'btn btn-default'
+        }, "Upload Voter Demographic Data"), React.createElement("span", null, "\u00a0"));
+      }
       return React.createElement("p", {
         "className": 'text-right'
-      }, React.createElement("a", {
-        "href": gon.new_vtl_url,
-        "className": 'btn btn-default'
-      }, "Upload Voter Administration Log Data"), React.createElement("span", null, "\u00a0"), React.createElement("a", {
-        "href": gon.new_demog_url,
-        "className": 'btn btn-default'
-      }, "Upload Voter Demographic Data"), React.createElement("span", null, "\u00a0"), React.createElement("a", {
+      }, uploadVTLButton, uploadDemogButton, React.createElement("a", {
         "onClick": actLockData,
         "disabled": lockDisabled,
         "data-confirm": 'Are you sure to lock?',

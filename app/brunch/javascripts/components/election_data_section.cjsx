@@ -54,7 +54,7 @@ DataStore = Reflux.createStore
   render: ->
     sectionClass = [ 'row', 'section', if @state.collapse then 'collapse' else null ].join(' ')
     buttonLabel  = if @state.collapse then 'Show' else 'Hide'
-    
+
     data    = @state.data
     noDemog = !data.has_demog
     noVTL   = !data.has_vtl
@@ -137,11 +137,24 @@ Buttons = React.createClass
       noDemog = !data.has_demog
       noVTL   = !data.has_vtl
       lockDisabled = noDemog || noVTL
+
+      if noVTL
+        uploadVTLButton =
+          <span>
+            <a href={gon.new_vtl_url} className='btn btn-default'>Upload Voter Administration Log Data</a>
+            <span>&nbsp;</span>
+          </span>
+
+      if noDemog
+        uploadDemogButton =
+          <span>
+            <a href={gon.new_demog_url} className='btn btn-default'>Upload Voter Demographic Data</a>
+            <span>&nbsp;</span>
+          </span>
+
       <p className='text-right'>
-        <a href={gon.new_vtl_url} className='btn btn-default'>Upload Voter Administration Log Data</a>
-        <span>&nbsp;</span>
-        <a href={gon.new_demog_url} className='btn btn-default'>Upload Voter Demographic Data</a>
-        <span>&nbsp;</span>
+        {uploadVTLButton}
+        {uploadDemogButton}
         <a onClick={actLockData} disabled={lockDisabled} data-confirm='Are you sure to lock?' className='btn btn-default'>Lock Data</a>
       </p>
 
@@ -227,7 +240,7 @@ Row = React.createClass
   render: ->
     sectionClass = [ 'row', 'section', if @state.collapse then 'collapse' else null ].join(' ')
     buttonLabel  = if @state.collapse then 'Show' else 'Hide'
-    
+
     data    = @state.data
 
     <div>
