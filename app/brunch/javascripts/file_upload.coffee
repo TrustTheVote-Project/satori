@@ -20,12 +20,12 @@ $("#file_upload input:file").each (i, elem) ->
     formData: { 'x-amz-meta-original-filename': '${filename}' }
 
     start: ->
-      progressBar.css width: '0%'
+      progressBar.css width: '10%'
       statusLabel.html("Uploading&hellip;")
       statusBar.show()
 
     progress: (e, data) ->
-      p = parseInt(data.loaded / data.total * 100, 10)
+      p = Math.max(10, parseInt(data.loaded / data.total * 100, 10))
       progressBar.css width: "#{p}%"
       progressBar.attr 'aria-valuenow': p
       progressBar.text "#{p}%"

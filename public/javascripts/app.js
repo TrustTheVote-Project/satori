@@ -755,14 +755,14 @@ $("#file_upload input:file").each(function(i, elem) {
     },
     start: function() {
       progressBar.css({
-        width: '0%'
+        width: '10%'
       });
       statusLabel.html("Uploading&hellip;");
       return statusBar.show();
     },
     progress: function(e, data) {
       var p;
-      p = parseInt(data.loaded / data.total * 100, 10);
+      p = Math.max(10, parseInt(data.loaded / data.total * 100, 10));
       progressBar.css({
         width: p + "%"
       });
