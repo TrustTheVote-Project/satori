@@ -724,7 +724,66 @@ module.exports = UploadRow = React.createClass({
 
 });
 
-require.register("reports", function(exports, require, module) {
+require.register("file_upload", function(exports, require, module) {
+$("#js-form").on("submit", function(e) {
+  e.preventDefault();
+  return alert("Please pick the XML file");
+});
+
+$("#file_upload input:file").each(function(i, elem) {
+  var fileInput, progressBar, statusBar, statusLabel;
+  fileInput = $(elem);
+  statusBar = $("#js-status-bar");
+  progressBar = $(".progress-bar", statusBar);
+  statusLabel = $(".status", statusBar);
+  statusBar.hide();
+  statusBar.removeClass('hide');
+  return fileInput.fileupload({
+    type: "PUT",
+    autoUpload: true,
+    acceptFileTypes: /\.xml$/i,
+    paramName: 'file',
+    multipart: false,
+    formData: {
+      'x-amz-meta-original-filename': '${filename}'
+    },
+    start: function() {
+      progressBar.css({
+        width: '0%'
+      });
+      statusLabel.html("Uploading&hellip;");
+      return statusBar.show();
+    },
+    progress: function(e, data) {
+      var p;
+      p = parseInt(data.loaded / data.total * 100, 10);
+      progressBar.css({
+        width: p + "%"
+      });
+      progressBar.attr({
+        'aria-valuenow': p
+      });
+      return progressBar.text(p + "%");
+    },
+    fail: function() {
+      fileInput.show();
+      return statusLabel.html("Failed to upload. Please retry.");
+    },
+    done: function() {
+      progressBar.css({
+        width: '100%'
+      });
+      progressBar.attr({
+        'aria-valuenow': 100
+      });
+      statusLabel.html("Uploaded. Please request.");
+      return $("#js-form")[0].submit();
+    }
+  });
+});
+});
+
+;require.register("reports", function(exports, require, module) {
 $(function() {
   var dt;
   dt = $('table.dataTable').dataTable({

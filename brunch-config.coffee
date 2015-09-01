@@ -8,6 +8,7 @@ exports.config =
         before: [
           'vendor/brunch/javascripts/jquery.dataTables.min.js',
           'vendor/brunch/javascripts/dataTables.fixedColumns.js'
+          'vendor/brunch/javascripts/jquery.ui.widget.js'
         ]
 
     stylesheets:

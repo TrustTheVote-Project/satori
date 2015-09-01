@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get "/locale/eavs"    => "locale#eavs", as: 'eavs_locale'
   get "/about"          => "pages#about", as: 'about_page'
 
+  resources :signed_urls, only: [ :create ]
+
   resources :elections do
     member do
       post :lock_data

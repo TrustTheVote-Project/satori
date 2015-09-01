@@ -37,9 +37,7 @@ class Uploader
     job.abort!(e.message)
     raise e
   ensure
-    if job.url !~ /^http/
-      FileUtils.rm(job.url)
-    end
+    cleanup(job)
   end
 
   def upload_demog(job, uploader_id)
@@ -65,6 +63,34 @@ class Uploader
   rescue => e
     job.abort!(e.message)
     raise e
+  ensure
+    cleanup(job)
+  end
+
+  def cleanup(job)
+    if job.url =~ /^http/
+      cleanup_url(job.url)
+    else
+      FileUtils.rm(job.url)
+    end
+  end
+
+  def cleanup_url(url)
+    key = get_amazon_key(url)
+    return if key.nil?
+
+    aws    = AppConfig['aws']
+    creds  = Aws::Credentials.new(aws['access_key_id'], aws['secret_access_key'])
+    client = Aws::S3::Client.new(region: aws['region'], credentials: creds)
+    client.delete_object(key: key, bucket: aws['s3_bucket'])
+  end
+
+  def get_amazon_key(url)
+    if m = url.scan(/\.amazonaws\.com\/#{AppConfig['aws']['s3_bucket']}\/(.+)$/) and m.flatten.size > 0
+      return m.flatten.first
+    else
+      return nil
+    end
   end
 
   # Log parsing handler

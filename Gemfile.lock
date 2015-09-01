@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:TrustTheVote-Project/demog.git
-  revision: f9fa3a41aa92f01ad8969b61930f6089e672f8ff
+  revision: 5fee52ee863615c54cba1cbb714435315a5d2ba4
   specs:
     demog (1.0.0)
       hashie
@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: git@github.com:TrustTheVote-Project/vtl.git
-  revision: 21cfd6a0148845c9bf696b8f465bc795e2cfb4bb
+  revision: 8099728bac047cc52409622e2f16c580c56432a5
   specs:
     vtl (1.0.0)
       hashie

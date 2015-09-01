@@ -1,0 +1,35 @@
+.page-header
+  %h2 Election Logs
+
+.row
+  .col-sm-12
+    = link_to "Back to election", @election
+
+.row
+  .col-sm-12
+    %h3= @title
+    %form.form#file_upload
+      .form-group
+        .row
+          .col-sm-3
+            .btn.btn-success.fileinput-button
+              %i.glyphicon.glyphicon-plus
+              %span Upload XML file
+              = file_field_tag :file, data: { url: @urls[:url] }
+
+      .form-group#js-status-bar.hide
+        .row
+          .col-sm-3
+            .progress
+              .progress-bar.progress-bar-info{ :role => 'progressbar', 'aria-valuenow' => 0, 'aria-valuemin' => 0, 'aria-valuemax' => 100 } 0%
+          .col-sm-3
+            .status
+              Uploading&hellip;
+
+
+    = form_for :upload, url: @submit_url, html: { class: 'form', id: 'js-form' } do |f|
+      = hidden_field_tag :resource_url, @urls[:resource_url]
+
+= content_for :scripts do
+  = javascript_tag do
+    require('file_upload');

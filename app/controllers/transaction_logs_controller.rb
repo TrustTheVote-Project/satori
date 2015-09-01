@@ -10,16 +10,21 @@ class TransactionLogsController < BaseController
     @errors  = @election.upload_jobs.vtl.errors
   end
 
+  # new upload form
+  def new
+    @title      = "Upload New Voter Transaction Log"
+    @submit_url = [ @election, :transaction_logs ]
+    @urls       = S3Presigner.presign
+    render 'shared/file_upload'
+  end
+
   # parses the upload and creates log and records
   def create
-    file = params[:upload][:file]
+    file = params[:resource_url]
+    uri  = URI.parse(file)
+    name = File.basename(uri.path)
 
-    path = "#{Rails.root}/tmp/uploads"
-    dst  = "#{path}/#{file.original_filename}"
-    FileUtils.mkdir_p(path)
-    FileUtils.mv(file.path, dst)
-
-    job = @election.upload_jobs.build(url: dst, filename: file.original_filename, kind: UploadJob::VTL, state: UploadJob::PENDING)
+    job = @election.upload_jobs.build(url: file, filename: name, kind: UploadJob::VTL, state: UploadJob::PENDING)
 
     if job.save
       Uploader.perform_async(job.id, current_user.id)

@@ -2,5 +2,6 @@
 aws:
   access_key_id:      AKIAXXXXXXXXXXXXXOUA
   secret_access_key:  lWZIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXTwR
+  region:             us-west-1
   s3_bucket:          bucket-name
   s3_path:            uploads
