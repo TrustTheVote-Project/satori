@@ -37,6 +37,6 @@ $("#file_upload input:file").each (i, elem) ->
     done: ->
       progressBar.css width: '100%'
       progressBar.attr 'aria-valuenow': 100
-      statusLabel.html("Uploaded. Please request.")
+      statusLabel.html("Uploaded. Initiating parsing&hellip;")
 
       $("#js-form")[0].submit()
