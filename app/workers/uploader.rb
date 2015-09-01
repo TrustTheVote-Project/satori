@@ -119,7 +119,7 @@ class Uploader
 
     def parsed_header(header)
       @log = @election.transaction_logs.build
-      @log.filename    = @filename || header.filename
+      @log.filename    = header.filename || @filename
       @log.origin      = header.origin
       @log.origin_uniq = header.origin_uniq
       @log.create_date = header.create_date
@@ -184,7 +184,7 @@ class Uploader
 
     def parsed_header(header)
       @file = @election.demog_files.build
-      @file.filename    = @filename || header.filename
+      @file.filename    = header.filename || @filename
       @file.origin      = header.origin
       @file.origin_uniq = header.origin_uniq
       @file.create_date = header.create_date
