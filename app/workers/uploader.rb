@@ -30,6 +30,8 @@ class Uploader
       job.finish!
     end
 
+    handler.flush_batch
+
     log = handler.log
     log.reload
     log.recalculate_stats!
@@ -56,6 +58,8 @@ class Uploader
       Reports.refresh
       job.finish!
     end
+
+    handler.flush_batch
 
     file = handler.file
     file.reload
