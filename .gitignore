@@ -12,3 +12,5 @@
 !/log/.keep
 /tmp
 dump.rdb
+
+config/config.yml
