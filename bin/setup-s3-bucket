@@ -1,0 +1,9 @@
+BUCKET=$1
+
+aws s3api create-bucket --acl private --bucket ${BUCKET}
+
+# Enable cross-domain queries from browser JS
+aws s3api put-bucket-cors --bucket ${BUCKET} --cors-configuration '{ "CORSRules": [ { "AllowedHeaders": [ "*" ], "AllowedMethods": [ "PUT" ], "AllowedOrigins": [ "*" ] } ] }'
+
+# Enable cleanup of 1-day old uploads
+aws s3api put-bucket-lifecycle --bucket ${BUCKET} --lifecycle-configuration '{ "Rules": [ { "Expiration": { "Days": 1 }, "ID": "Delete old uploads", "Prefix": "uploads/", "Status": "Enabled" } ] }'
