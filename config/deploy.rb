@@ -60,7 +60,7 @@ namespace :deploy do
     end
   end
 
-  after 'deploy:publishing', 'sidekiq:monit:restart'
+  after :restart, 'sidekiq:monit:restart'
 end
 
 namespace :db do
