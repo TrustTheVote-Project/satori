@@ -36,8 +36,8 @@ gem 'activerecord-import'
 # gem 'capistrano-rails', group: :development
 
 gem "tenet", git: "https://github.com/trustthevote/Tenet-Framework.git", branch: "rails-4-2-3"
-gem "vtl", git: "git@github.com:TrustTheVote-Project/vtl.git"
-gem "demog", git: "git@github.com:TrustTheVote-Project/demog.git"
+gem "vtl", git: "git@github.com:TrustTheVote-Project/VITALspace.git"
+gem "demog", git: "git@github.com:TrustTheVote-Project/VODaSpace.git"
 gem "react-rails"
 
 group :development do

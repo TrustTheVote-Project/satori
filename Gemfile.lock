@@ -1,17 +1,17 @@
 GIT
-  remote: git@github.com:TrustTheVote-Project/demog.git
-  revision: 5fee52ee863615c54cba1cbb714435315a5d2ba4
+  remote: git@github.com:TrustTheVote-Project/VITALspace.git
+  revision: e2b195c6c6c450517dad0a9f17d4f8ef8cfd2745
   specs:
-    demog (1.0.0)
+    vtl (1.0.0)
       hashie
       nokogiri
       timeliness
 
 GIT
-  remote: git@github.com:TrustTheVote-Project/vtl.git
-  revision: 8099728bac047cc52409622e2f16c580c56432a5
+  remote: git@github.com:TrustTheVote-Project/VODaSpace.git
+  revision: 7eb0b63ff7bc57da1f0030ff8a41508017f8163c
   specs:
-    vtl (1.0.0)
+    demog (1.0.0)
       hashie
       nokogiri
       timeliness
